@@ -4,7 +4,7 @@ function buildDash(){
   const avgAll=avg(G.factorScores);
 
   // Adesão banner
-  const banner=document.getElementById('adesao-banner');
+  const banner=document.getElementById('adesao-warn');
   if(G.meta.totalRef>0&&G.meta.adesaoPct<30){
     banner.style.display='block';
     banner.innerHTML=`⚠️ <strong>Baixa Adesão de Respondentes:</strong> ${G.n} de ${G.meta.totalRef} colaboradores responderam (${G.meta.adesaoPct.toFixed(1)}%). Taxa abaixo de 30% pode gerar viés na análise. Os resultados devem ser interpretados com cautela.`;
