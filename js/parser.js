@@ -202,7 +202,7 @@ function parseXlsxRows(rows, extraPdfRows=[]){
 
 
 function parsePdfOnly(rows){
-  if(!rows.length){alert('Nenhuma resposta extraída dos PDFs.');document.getElementById('btn-go').disabled=false;updateBtng();return;}
+  if(!rows.length){alert('Nenhuma resposta extraída dos PDFs.');document.getElementById('btn-go').disabled=false;updateBtnGo();return;}
   // Build a synthetic xlsx-style dataset where:
   // Col 0: timestamp (dummy)
   // Col 1: empresa
@@ -235,5 +235,5 @@ function parsePdfOnly(rows){
   document.querySelectorAll('.inst-btn').forEach(b=>{
     b.classList.toggle('sel', b.getAttribute('onclick')?.includes('copsoq2a'));
   });
-  parseRows([hdr,...dataRows],[]);
+  parseXlsxRows([hdr,...dataRows],[]);
 }

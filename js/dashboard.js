@@ -1,4 +1,14 @@
 function buildDash(){
+  dc('bar');dc('nps');dc('set');
+  document.getElementById('panel-dash').innerHTML=`
+    <div id="kpi-row" class="kpi-row" style="margin-bottom:18px"></div>
+    <div class="g3" style="margin-bottom:16px">
+      <div class="card"><div class="ct">Fatores de Risco</div><div style="height:260px"><canvas id="ch-bar"></canvas></div></div>
+      <div class="card"><div class="ct">NPS Interno</div><div class="nps-wrap"><div class="nps-ring"><canvas id="ch-nps"></canvas><div class="nps-ctr"><div class="nps-num" id="npsnm"></div><div class="nps-lbl">NPS</div></div></div><div class="nps-rows" id="npsrows"></div></div></div>
+      <div class="card"><div class="ct">Respondentes por Setor</div><div style="height:200px"><canvas id="ch-set"></canvas></div></div>
+    </div>
+    <div class="ct" style="margin-bottom:12px">Dimensões</div>
+    <div class="dim-grid" id="dimgrid"></div>`;
   const inst=INSTRUMENTS[G.inst];
   const topF=inst.factors[G.factorScores.indexOf(Math.max(...G.factorScores))]?.name||'—';
   const avgAll=avg(G.factorScores);
@@ -20,13 +30,13 @@ function buildDash(){
   document.getElementById('kpi-row').innerHTML=kpis.map(k=>`<div class="kpi" style="--kc:${k.c}"><div class="kl">${k.l}</div><div class="kv">${k.v}</div><div class="ks">${k.s}</div></div>`).join('');
 
   const srt=G.factorScores.map((s,i)=>({s,i})).sort((a,b)=>b.s-a.s);
-  dc('bar');charts['bar']=new Chart(document.getElementById('ch-bar').getContext('2d'),{
+  charts['bar']=new Chart(document.getElementById('ch-bar').getContext('2d'),{
     type:'bar',
     data:{labels:srt.map(x=>inst.factors[x.i].name),datasets:[{data:srt.map(x=>+x.s.toFixed(1)),backgroundColor:srt.map(x=>rc(x.s)+'99'),borderColor:srt.map(x=>rc(x.s)),borderWidth:1,borderRadius:4}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#111827',borderColor:'#1e2d45',borderWidth:1,callbacks:{label:c=>` ${c.raw.toFixed(1)}%`}}},scales:{x:{max:100,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#6b7fa3',font:{size:10},callback:v=>v+'%'},border:{color:'transparent'}},y:{grid:{display:false},ticks:{color:'#c8ccd8',font:{size:10}},border:{color:'transparent'}}}}
   });
 
-  dc('nps');charts['nps']=new Chart(document.getElementById('ch-nps').getContext('2d'),{
+  charts['nps']=new Chart(document.getElementById('ch-nps').getContext('2d'),{
     type:'doughnut',data:{labels:['Detratores','Neutros','Promotores'],datasets:[{data:[G.nps.det,G.nps.neu,G.nps.pro],backgroundColor:['#ef444488','#f59e0b88','#22c55e88'],borderColor:['#ef4444','#f59e0b','#22c55e'],borderWidth:2}]},
     options:{cutout:'68%',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#111827',borderColor:'#1e2d45',borderWidth:1}}}
   });
@@ -35,7 +45,7 @@ function buildDash(){
 
   const setE=Object.entries(G.demo.setor).sort((a,b)=>b[1]-a[1]).slice(0,8);
   const sP=['#4f8ef7','#7c5cfc','#22c55e','#06b6d4','#f59e0b','#ec4899','#10b981','#f97316'];
-  dc('set');charts['set']=new Chart(document.getElementById('ch-set').getContext('2d'),{
+  charts['set']=new Chart(document.getElementById('ch-set').getContext('2d'),{
     type:'bar',data:{labels:setE.map(s=>s[0]),datasets:[{data:setE.map(s=>s[1]),backgroundColor:sP.map(c=>c+'99'),borderColor:sP,borderWidth:1,borderRadius:4}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#6b7fa3',font:{size:9}},border:{color:'transparent'}},y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#6b7fa3',font:{size:9}},border:{color:'transparent'}}}}
   });
@@ -44,6 +54,17 @@ function buildDash(){
 }
 
 function buildFat(){
+  document.getElementById('panel-fat').innerHTML=`
+    <div class="g2" style="margin-bottom:16px">
+      <div class="card"><div class="ct">Top Fatores de Risco</div><div id="ranking"></div></div>
+      <div class="card"><div class="ct">Legenda do Instrumento</div><div id="inst-legend" style="font-size:11px;line-height:1.7;color:var(--mu)"></div></div>
+    </div>
+    <div class="card"><div class="ct">Todos os Fatores</div>
+      <table class="mt" style="width:100%">
+        <thead><tr><th>Fator</th><th>Questões</th><th>Score</th><th>Classificação</th><th>Severidade</th><th>Fonte Geradora</th></tr></thead>
+        <tbody id="fattbody"></tbody>
+      </table>
+    </div>`;
   const inst=INSTRUMENTS[G.inst];
   const srt=G.factorScores.map((s,i)=>({s,i})).sort((a,b)=>b.s-a.s);
   // Legenda específica por instrumento
@@ -76,13 +97,24 @@ function buildFat(){
 }
 
 function buildDemo(){
+  dc('sex');dc('set2');dc('civ');
+  document.getElementById('panel-demo').innerHTML=`
+    <div class="g2 mb">
+      <div class="card"><div class="ct">Sexo</div><div style="display:flex;gap:20px;align-items:center"><div style="flex-shrink:0;width:140px;height:140px;position:relative"><canvas id="ch-sex"></canvas></div><div id="sexbars" style="flex:1"></div></div></div>
+      <div class="card"><div class="ct">Faixa Etária</div><div id="faixabars"></div></div>
+    </div>
+    <div class="g2 mb">
+      <div class="card"><div class="ct">Escolaridade</div><div id="escbars"></div></div>
+      <div class="card"><div class="ct">Estado Civil</div><div style="display:flex;gap:20px;align-items:center"><div style="flex-shrink:0;width:140px;height:140px;position:relative"><canvas id="ch-civ"></canvas></div><div id="civbars" style="flex:1"></div></div></div>
+    </div>
+    <div class="card mb"><div class="ct">Respondentes por Setor</div><div style="height:200px"><canvas id="ch-set2"></canvas></div></div>`;
   const p1=['#4f8ef7','#7c5cfc'],p2=['#22c55e','#4f8ef7','#f59e0b','#ef4444','#7c5cfc','#06b6d4'];
   function dBars(id,data,pal){
     const t=Object.values(data).reduce((a,b)=>a+b,0);
     document.getElementById(id).innerHTML=Object.entries(data).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>`<div class="dem"><div class="dot" style="background:${pal[i%pal.length]}"></div><div class="dlbl">${k}</div><div class="dbb2"><div class="dbf2" style="width:${t?v/t*100:0}%;background:${pal[i%pal.length]}"></div></div><div class="dpct">${v}·${t?(v/t*100).toFixed(0):0}%</div></div>`).join('');
   }
   dBars('sexbars',G.demo.sexo,p1);dBars('faixabars',G.demo.faixa,p2);dBars('escbars',G.demo.escol,p2);dBars('civbars',G.demo.civil,p2);
-  dc('sex');const se=Object.entries(G.demo.sexo);charts['sex']=new Chart(document.getElementById('ch-sex').getContext('2d'),{type:'doughnut',data:{labels:se.map(s=>s[0]),datasets:[{data:se.map(s=>s[1]),backgroundColor:p1.map(c=>c+'99'),borderColor:p1,borderWidth:2}]},options:{cutout:'60%',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#e8eef8',font:{size:10}}}}}});
-  dc('set2');const se2=Object.entries(G.demo.setor).sort((a,b)=>b[1]-a[1]);const sp2=['#4f8ef7','#7c5cfc','#22c55e','#06b6d4','#f59e0b','#ec4899','#10b981','#f97316','#a78bfa','#34d399'];charts['set2']=new Chart(document.getElementById('ch-set2').getContext('2d'),{type:'bar',data:{labels:se2.map(s=>s[0]),datasets:[{data:se2.map(s=>s[1]),backgroundColor:sp2.map(c=>c+'99'),borderColor:sp2,borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#6b7fa3',font:{size:9}},border:{color:'transparent'}},y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#6b7fa3',font:{size:9}},border:{color:'transparent'}}}}});
-  dc('civ');const ce=Object.entries(G.demo.civil);charts['civ']=new Chart(document.getElementById('ch-civ').getContext('2d'),{type:'doughnut',data:{labels:ce.map(s=>s[0]),datasets:[{data:ce.map(s=>s[1]),backgroundColor:p2.map(c=>c+'99'),borderColor:p2,borderWidth:2}]},options:{cutout:'55%',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#e8eef8',font:{size:10},boxWidth:10}}}}});
+  const se=Object.entries(G.demo.sexo);charts['sex']=new Chart(document.getElementById('ch-sex').getContext('2d'),{type:'doughnut',data:{labels:se.map(s=>s[0]),datasets:[{data:se.map(s=>s[1]),backgroundColor:p1.map(c=>c+'99'),borderColor:p1,borderWidth:2}]},options:{cutout:'60%',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#e8eef8',font:{size:10}}}}}});
+  const se2=Object.entries(G.demo.setor).sort((a,b)=>b[1]-a[1]);const sp2=['#4f8ef7','#7c5cfc','#22c55e','#06b6d4','#f59e0b','#ec4899','#10b981','#f97316','#a78bfa','#34d399'];charts['set2']=new Chart(document.getElementById('ch-set2').getContext('2d'),{type:'bar',data:{labels:se2.map(s=>s[0]),datasets:[{data:se2.map(s=>s[1]),backgroundColor:sp2.map(c=>c+'99'),borderColor:sp2,borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#6b7fa3',font:{size:9}},border:{color:'transparent'}},y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#6b7fa3',font:{size:9}},border:{color:'transparent'}}}}});
+  const ce=Object.entries(G.demo.civil);charts['civ']=new Chart(document.getElementById('ch-civ').getContext('2d'),{type:'doughnut',data:{labels:ce.map(s=>s[0]),datasets:[{data:ce.map(s=>s[1]),backgroundColor:p2.map(c=>c+'99'),borderColor:p2,borderWidth:2}]},options:{cutout:'55%',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#e8eef8',font:{size:10},boxWidth:10}}}}});
 }

@@ -54,7 +54,7 @@ function loadFromHistory(id){
   document.getElementById('nav-inst').textContent=INSTRUMENTS[G.inst]?.short||G.inst;
   document.getElementById('nav-meta').textContent=`${G.meta.empresa} · ${G.meta.unidade} · ${G.meta.periodo} · ${G.n} respondentes`;
   buildDash();buildFat();buildDemo();buildFontesEd();buildActPanel();buildReport();buildHistView();buildTemplateGrid();
-  tab('dash');
+  switchTab('dash');
 }
 
 function deleteFromHistory(id){

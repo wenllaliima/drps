@@ -2,7 +2,7 @@
 function switchTab(name){
   const map={dash:'panel-dash',fat:'panel-fat',demo:'panel-demo',fontes:'panel-fontes',acoes:'panel-acoes',rel:'panel-rel',hist:'panel-hist'};
 
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(map[name]).classList.add('active');
   if(name==='rel'){buildReport();buildTemplateGrid();}
@@ -12,6 +12,7 @@ function switchTab(name){
 function backToUpload(){
   document.getElementById('app').style.display='none';
   document.getElementById('upl').style.display='flex';
+  const drop=document.getElementById('drop');
   drop.querySelector('.drop-icon').textContent='📊';
   drop.querySelector('p').innerHTML='<strong>Clique para selecionar</strong> ou arraste aqui';
   document.getElementById('btn-go').disabled=true;document.getElementById('btn-go').textContent='↑ Selecione um arquivo para continuar';
