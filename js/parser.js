@@ -1,6 +1,17 @@
 function parseXlsxRows(rows, extraPdfRows=[]){
   const hdrs=rows[0].map(h=>String(h).toLowerCase().trim());
   const data=rows.slice(1).filter(r=>r.some(c=>c!==''));
+
+  // Pre-process: convert text health-scale answers to numeric (e.g. COPSOQ "Em geral, sente que sua saúde é?")
+  const healthTextMap={'excelente':5,'muito boa':4,'muito bom':4,'boa':3,'bom':3,'razoável':2,'razoavel':2,'ruim':1,'péssima':1,'pessima':1};
+  data.forEach(row=>{
+    for(let i=0;i<row.length;i++){
+      if(typeof row[i]==='string'){
+        const lc=row[i].trim().toLowerCase();
+        if(healthTextMap[lc]!==undefined) row[i]=healthTextMap[lc];
+      }
+    }
+  });
   const inst=INSTRUMENTS[INST];
 
   // Auto-detect NPS
