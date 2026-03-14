@@ -225,183 +225,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 </head>
 <body>
 
-<div id="upl">
-  <div class="logo-row">
-    <div class="hex">D</div>
-    <div><h1>DRPS</h1><p>Diagnóstico de Riscos Psicossociais</p></div>
-  </div>
-  <div class="ucard">
-    <h2>Nova Avaliação</h2>
-    <p>Selecione o instrumento, configure os dados e faça upload das respostas.</p>
-
-    <div class="fg-label">1. Instrumento de Avaliação</div>
-    <div class="inst-grid" id="inst-grid">
-      <button class="inst-btn sel" onclick="selectInst('aot',this)">
-        <span class="ib-name">AOT — Avaliação da Org. do Trabalho</span>
-        <span class="ib-desc">24 questões · AMBRAC/DRPS · NR-1</span>
-      </button>
-      <button class="inst-btn" onclick="selectInst('copsoq2s',this)">
-        <span class="ib-name">COPSOQ II — Versão Curta</span>
-        <span class="ib-desc">40 questões · 24 fatores · Escala 1–5</span>
-      </button>
-      <button class="inst-btn" onclick="selectInst('copsoq2m',this)">
-        <span class="ib-name">COPSOQ II — Versão Média</span>
-        <span class="ib-desc">72 questões · 26 dimensões · Escala 1–5</span>
-      </button>
-      <button class="inst-btn" onclick="selectInst('copsoq3',this)">
-        <span class="ib-name">COPSOQ III — Brasil (Rodrigues, 2020)</span>
-        <span class="ib-desc">79 itens · 7 fatores validados · Escala 1–5</span>
-      </button>
-      <button class="inst-btn inst-full" onclick="selectInst('copsoq2a',this)">
-        <span class="ib-name">COPSOQ II — Versão Adaptada (Baixa Escolaridade)</span>
-        <span class="ib-desc">41 questões · Q45–48 binárias (Sim/Não) · Q50 saúde 0–10 · Combina com COPSOQ II original</span>
-      </button>
-    </div>
-
-    <div class="fg-label" style="margin-top:18px">2. Fontes de Respostas</div>
-
-    <div style="font-size:11px;color:var(--mu);margin-bottom:6px;display:flex;align-items:center;gap:6px">
-      <span style="background:var(--ac);color:#000;font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px">XLSX</span>
-      Planilha Google Forms — COPSOQ II Original <span style="color:var(--mu)">(opcional se usar só PDFs)</span>
-    </div>
-    <div class="drop" id="drop">
-      <input type="file" id="fi" accept=".xlsx,.xls">
-      <span class="drop-icon" id="xlsx-icon">📊</span>
-      <p id="xlsx-p1"><strong>Clique</strong> ou arraste a planilha</p>
-      <p id="xlsx-p2" style="font-size:11px;margin-top:3px;color:var(--mu)">.xlsx ou .xls exportado do Google Forms</p>
-    </div>
-
-    <div style="font-size:11px;color:var(--mu);margin:12px 0 6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-      <span style="background:#f59e0b;color:#000;font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px">PDF</span>
-      Formulários escaneados — COPSOQ II Adaptado <span style="color:var(--mu)">(um PDF por respondente)</span>
-      <span id="pdf-badge" style="display:none;margin-left:auto;font-size:10px;font-weight:700;color:#f59e0b"></span>
-    </div>
-    <div class="drop" id="pdf-drop" style="border-color:rgba(245,158,11,.4)">
-      <input type="file" id="pdf-fi" accept=".pdf" multiple>
-      <span class="drop-icon" id="pdf-icon">📄</span>
-      <p id="pdf-p1"><strong>Clique</strong> ou arraste PDFs (múltiplos)</p>
-      <p style="font-size:11px;margin-top:3px;color:var(--mu)">Requer chave Groq para OCR</p>
-    </div>
-    <div id="pdf-list"></div>
-    <div id="col-notice" style="display:none;margin-top:8px;padding:9px 13px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:7px;font-size:11px;color:#fbbf24;line-height:1.5"></div>
-
-    <div class="fg-label" style="margin-top:18px">3. Dados do Relatório</div>
-    <div class="fg-grid">
-      <div class="fg"><label>Empresa</label><input id="f-emp" placeholder="Nome da empresa" value="MPE"></div>
-      <div class="fg"><label>Unidade</label><input id="f-uni" placeholder="Unidade / filial" value="HUB"></div>
-      <div class="fg"><label>Ramo / Setor da empresa</label><input id="f-ramo" placeholder="Ex: Construção civil, Saúde…"></div>
-      <div class="fg"><label>Período</label><input id="f-per" placeholder="Ex: Janeiro de 2026" value="Janeiro de 2026"></div>
-      <div class="fg"><label>Avaliado por</label><input id="f-ava" placeholder="Empresa / consultoria" value="AMBRAC"></div>
-      <div class="fg full"><label>Psicóloga responsável · CRP</label><input id="f-psi" placeholder="Nome · CRP: XX/XXXXX" value="Psicóloga Wenlla Lima · CRP: 01/27313"></div>
-      <div class="fg"><label>Total de colaboradores (referência)</label><input type="number" id="f-total" placeholder="Ex: 81" value="81" oninput="checkAdesao()"></div>
-      <div class="fg"><label>Respondentes detectados</label><input type="number" id="f-resp" readonly style="opacity:.6"></div>
-      <div id="adesao-warn" style="display:none;grid-column:1/-1;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:8px 12px;font-size:11px;color:#f87171">⚠️ <strong>Baixa Adesão:</strong> menos de 30% responderam. Isso pode gerar viés.</div>
-      <div class="logo-upload-row">
-        <div class="logo-preview" id="logo-preview">🏢</div>
-        <div class="logo-upload-btn">
-          <input type="file" id="logo-fi" accept="image/*" onchange="loadLogo(this)">
-          📎 Carregar logo da empresa
-        </div>
-      </div>
-    </div>
-    <div id="ocr-status" style="display:none;margin-top:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:12px 14px">
-      <div style="font-size:11px;font-weight:700;color:#fbbf24;margin-bottom:6px">🔍 Processando PDFs via OCR…</div>
-      <div id="ocr-progress" style="font-size:11px;color:var(--mu);line-height:1.8"></div>
-    </div>
-    <button class="btn-go" id="btn-go" disabled onclick="runAnalysis()">↑ Selecione planilha ou PDFs para continuar</button>
-  </div>
-</div>
-
-<div id="app" style="display:none">
-  <nav class="nav">
-    <div class="nav-l">
-      <div class="nhex">D</div>
-      <span class="nav-title">DRPS</span>
-      <span class="nav-inst" id="nav-inst"></span>
-    </div>
-    <div class="nav-meta" id="nav-meta"></div>
-    <div class="nav-r">
-      <button class="bs o" onclick="saveToHistory()">💾 Salvar</button>
-      <button class="bs o" onclick="backToUpload()">← Novo</button>
-      <button class="bs p" onclick="printReport()">🖨 Imprimir</button>
-    </div>
-  </nav>
-  <div class="tabs">
-    <div class="tab active" data-tab="dash" onclick="switchTab('dash')">📊 Dashboard</div>
-    <div class="tab" data-tab="fat"  onclick="switchTab('fat')">🎯 Fatores</div>
-    <div class="tab" data-tab="demo" onclick="switchTab('demo')">👥 Perfil</div>
-    <div class="tab" data-tab="fontes" onclick="switchTab('fontes')">✏️ Fontes</div>
-    <div class="tab" data-tab="acoes" onclick="switchTab('acoes')">⚡ Ações</div>
-    <div class="tab" data-tab="rel"  onclick="switchTab('rel')">📄 Relatório</div>
-    <div class="tab" data-tab="hist" onclick="switchTab('hist')">🗂 Histórico</div>
-  </div>
-
-  <div id="panel-dash" class="panel active" style="padding:22px;max-width:1380px;margin:0 auto"></div>
-  <div id="panel-fat"  class="panel" style="padding:22px;max-width:1380px;margin:0 auto"></div>
-  <div id="panel-demo" class="panel" style="padding:22px;max-width:1380px;margin:0 auto"></div>
-
-  <div id="panel-fontes" class="panel" style="padding:22px;max-width:1380px;margin:0 auto">
-    <div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:9px;padding:11px 15px;margin-bottom:16px;font-size:12px;color:#fbbf24">
-      ✏️ <strong>Edite as Fontes Geradoras</strong> — aparecem destacadas no relatório.
-    </div>
-    <div id="fontes-ed"></div>
-  </div>
-
-  <div id="panel-acoes" class="panel" style="padding:22px;max-width:1380px;margin:0 auto">
-    <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;flex-wrap:wrap">
-      <div style="flex:1;min-width:240px;background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.2);border-radius:9px;padding:11px 15px;font-size:12px;color:var(--ac);line-height:1.6">
-        ⚡ Selecione ações para o relatório. <strong>★ sugeridas</strong> automaticamente pelos maiores scores.
-      </div>
-      <div style="background:var(--sf2);border:1px solid var(--bd);border-radius:9px;padding:13px 16px;min-width:260px">
-        <div style="font-size:11px;font-weight:700;color:var(--tx);margin-bottom:5px">🤖 Plano por IA — Personalizado por Setor</div>
-        <div style="font-size:11px;color:var(--mu);margin-bottom:10px;line-height:1.5">Gera intervenções específicas para cada setor com base no perfil de risco e ramo da empresa.</div>
-        <button class="bs p" id="ai-plan-btn" onclick="generateSectorActionPlan()" style="width:100%;padding:9px">🤖 Gerar Plano por IA</button>
-        <div id="ai-plan-area" style="margin-top:10px"></div>
-      </div>
-    </div>
-    <div class="action-filter" id="act-filter"></div>
-    <div class="action-list" id="act-list"></div>
-  </div>
-
-  <div id="panel-rel" class="panel" style="padding:22px;max-width:1380px;margin:0 auto">
-    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:18px">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-        <div><h2 style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700">Relatório Diagnóstico</h2><p style="font-size:12px;color:var(--mu);margin-top:3px">Pronto para impressão ou PDF</p></div>
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;color:var(--mu)">
-            <input type="checkbox" id="inc-dash" checked onchange="buildReport()"> Incluir dashboard
-          </label>
-          <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mu)">
-            📅 <input type="text" id="rep-date" placeholder="Data do relatório"
-              style="background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;color:var(--tx);font-size:12px;width:160px"
-              oninput="reportDate=this.value;buildReport()">
-          </label>
-          <button class="bs p" style="padding:9px 18px;font-size:13px" onclick="printReport()">🖨 Imprimir</button>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--bd)">
-        <span style="font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Template:</span>
-        <div id="tpl-grid" style="display:flex;gap:8px;flex-wrap:wrap"></div>
-        <input id="clinic-input" type="text" placeholder="Nome da clínica (salva preferência)"
-          style="margin-left:auto;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;color:var(--tx);font-size:11px;width:220px"
-          oninput="clinicName=this.value;saveClinicPref()">
-      </div>
-    </div>
-    <div class="rep-body" id="rep-body"></div>
-  </div>
-
-  <div id="panel-hist" class="panel" style="padding:22px;max-width:1380px;margin:0 auto">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <div><h2 style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700">Banco de Relatórios</h2></div>
-      <button class="bs o" onclick="clearHistory()" style="border-color:rgba(239,68,68,.3);color:#f87171">🗑 Limpar tudo</button>
-    </div>
-    <div id="hist-list"></div>
-  </div>
-</div>
-<div id="print-zone" style="display:none"></div>
-
-
-<script>
+<script defer>
 const INSTRUMENTS = {
 
   aot: {
@@ -2431,5 +2255,181 @@ function printReport(){
 }
 
 </script>
+
+<div id="upl">
+  <div class="logo-row">
+    <div class="hex">D</div>
+    <div><h1>DRPS</h1><p>Diagnóstico de Riscos Psicossociais</p></div>
+  </div>
+  <div class="ucard">
+    <h2>Nova Avaliação</h2>
+    <p>Selecione o instrumento, configure os dados e faça upload das respostas.</p>
+
+    <div class="fg-label">1. Instrumento de Avaliação</div>
+    <div class="inst-grid" id="inst-grid">
+      <button class="inst-btn sel" onclick="selectInst('aot',this)">
+        <span class="ib-name">AOT — Avaliação da Org. do Trabalho</span>
+        <span class="ib-desc">24 questões · AMBRAC/DRPS · NR-1</span>
+      </button>
+      <button class="inst-btn" onclick="selectInst('copsoq2s',this)">
+        <span class="ib-name">COPSOQ II — Versão Curta</span>
+        <span class="ib-desc">40 questões · 24 fatores · Escala 1–5</span>
+      </button>
+      <button class="inst-btn" onclick="selectInst('copsoq2m',this)">
+        <span class="ib-name">COPSOQ II — Versão Média</span>
+        <span class="ib-desc">72 questões · 26 dimensões · Escala 1–5</span>
+      </button>
+      <button class="inst-btn" onclick="selectInst('copsoq3',this)">
+        <span class="ib-name">COPSOQ III — Brasil (Rodrigues, 2020)</span>
+        <span class="ib-desc">79 itens · 7 fatores validados · Escala 1–5</span>
+      </button>
+      <button class="inst-btn inst-full" onclick="selectInst('copsoq2a',this)">
+        <span class="ib-name">COPSOQ II — Versão Adaptada (Baixa Escolaridade)</span>
+        <span class="ib-desc">41 questões · Q45–48 binárias (Sim/Não) · Q50 saúde 0–10 · Combina com COPSOQ II original</span>
+      </button>
+    </div>
+
+    <div class="fg-label" style="margin-top:18px">2. Fontes de Respostas</div>
+
+    <div style="font-size:11px;color:var(--mu);margin-bottom:6px;display:flex;align-items:center;gap:6px">
+      <span style="background:var(--ac);color:#000;font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px">XLSX</span>
+      Planilha Google Forms — COPSOQ II Original <span style="color:var(--mu)">(opcional se usar só PDFs)</span>
+    </div>
+    <div class="drop" id="drop">
+      <input type="file" id="fi" accept=".xlsx,.xls">
+      <span class="drop-icon" id="xlsx-icon">📊</span>
+      <p id="xlsx-p1"><strong>Clique</strong> ou arraste a planilha</p>
+      <p id="xlsx-p2" style="font-size:11px;margin-top:3px;color:var(--mu)">.xlsx ou .xls exportado do Google Forms</p>
+    </div>
+
+    <div style="font-size:11px;color:var(--mu);margin:12px 0 6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <span style="background:#f59e0b;color:#000;font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px">PDF</span>
+      Formulários escaneados — COPSOQ II Adaptado <span style="color:var(--mu)">(um PDF por respondente)</span>
+      <span id="pdf-badge" style="display:none;margin-left:auto;font-size:10px;font-weight:700;color:#f59e0b"></span>
+    </div>
+    <div class="drop" id="pdf-drop" style="border-color:rgba(245,158,11,.4)">
+      <input type="file" id="pdf-fi" accept=".pdf" multiple>
+      <span class="drop-icon" id="pdf-icon">📄</span>
+      <p id="pdf-p1"><strong>Clique</strong> ou arraste PDFs (múltiplos)</p>
+      <p style="font-size:11px;margin-top:3px;color:var(--mu)">Requer chave Groq para OCR</p>
+    </div>
+    <div id="pdf-list"></div>
+    <div id="col-notice" style="display:none;margin-top:8px;padding:9px 13px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:7px;font-size:11px;color:#fbbf24;line-height:1.5"></div>
+
+    <div class="fg-label" style="margin-top:18px">3. Dados do Relatório</div>
+    <div class="fg-grid">
+      <div class="fg"><label>Empresa</label><input id="f-emp" placeholder="Nome da empresa" value="MPE"></div>
+      <div class="fg"><label>Unidade</label><input id="f-uni" placeholder="Unidade / filial" value="HUB"></div>
+      <div class="fg"><label>Ramo / Setor da empresa</label><input id="f-ramo" placeholder="Ex: Construção civil, Saúde…"></div>
+      <div class="fg"><label>Período</label><input id="f-per" placeholder="Ex: Janeiro de 2026" value="Janeiro de 2026"></div>
+      <div class="fg"><label>Avaliado por</label><input id="f-ava" placeholder="Empresa / consultoria" value="AMBRAC"></div>
+      <div class="fg full"><label>Psicóloga responsável · CRP</label><input id="f-psi" placeholder="Nome · CRP: XX/XXXXX" value="Psicóloga Wenlla Lima · CRP: 01/27313"></div>
+      <div class="fg"><label>Total de colaboradores (referência)</label><input type="number" id="f-total" placeholder="Ex: 81" value="81" oninput="checkAdesao()"></div>
+      <div class="fg"><label>Respondentes detectados</label><input type="number" id="f-resp" readonly style="opacity:.6"></div>
+      <div id="adesao-warn" style="display:none;grid-column:1/-1;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:8px 12px;font-size:11px;color:#f87171">⚠️ <strong>Baixa Adesão:</strong> menos de 30% responderam. Isso pode gerar viés.</div>
+      <div class="logo-upload-row">
+        <div class="logo-preview" id="logo-preview">🏢</div>
+        <div class="logo-upload-btn">
+          <input type="file" id="logo-fi" accept="image/*" onchange="loadLogo(this)">
+          📎 Carregar logo da empresa
+        </div>
+      </div>
+    </div>
+    <div id="ocr-status" style="display:none;margin-top:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:12px 14px">
+      <div style="font-size:11px;font-weight:700;color:#fbbf24;margin-bottom:6px">🔍 Processando PDFs via OCR…</div>
+      <div id="ocr-progress" style="font-size:11px;color:var(--mu);line-height:1.8"></div>
+    </div>
+    <button class="btn-go" id="btn-go" disabled onclick="runAnalysis()">↑ Selecione planilha ou PDFs para continuar</button>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+  <nav class="nav">
+    <div class="nav-l">
+      <div class="nhex">D</div>
+      <span class="nav-title">DRPS</span>
+      <span class="nav-inst" id="nav-inst"></span>
+    </div>
+    <div class="nav-meta" id="nav-meta"></div>
+    <div class="nav-r">
+      <button class="bs o" onclick="saveToHistory()">💾 Salvar</button>
+      <button class="bs o" onclick="backToUpload()">← Novo</button>
+      <button class="bs p" onclick="printReport()">🖨 Imprimir</button>
+    </div>
+  </nav>
+  <div class="tabs">
+    <div class="tab active" data-tab="dash" onclick="switchTab('dash')">📊 Dashboard</div>
+    <div class="tab" data-tab="fat"  onclick="switchTab('fat')">🎯 Fatores</div>
+    <div class="tab" data-tab="demo" onclick="switchTab('demo')">👥 Perfil</div>
+    <div class="tab" data-tab="fontes" onclick="switchTab('fontes')">✏️ Fontes</div>
+    <div class="tab" data-tab="acoes" onclick="switchTab('acoes')">⚡ Ações</div>
+    <div class="tab" data-tab="rel"  onclick="switchTab('rel')">📄 Relatório</div>
+    <div class="tab" data-tab="hist" onclick="switchTab('hist')">🗂 Histórico</div>
+  </div>
+
+  <div id="panel-dash" class="panel active" style="padding:22px;max-width:1380px;margin:0 auto"></div>
+  <div id="panel-fat"  class="panel" style="padding:22px;max-width:1380px;margin:0 auto"></div>
+  <div id="panel-demo" class="panel" style="padding:22px;max-width:1380px;margin:0 auto"></div>
+
+  <div id="panel-fontes" class="panel" style="padding:22px;max-width:1380px;margin:0 auto">
+    <div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:9px;padding:11px 15px;margin-bottom:16px;font-size:12px;color:#fbbf24">
+      ✏️ <strong>Edite as Fontes Geradoras</strong> — aparecem destacadas no relatório.
+    </div>
+    <div id="fontes-ed"></div>
+  </div>
+
+  <div id="panel-acoes" class="panel" style="padding:22px;max-width:1380px;margin:0 auto">
+    <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px;background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.2);border-radius:9px;padding:11px 15px;font-size:12px;color:var(--ac);line-height:1.6">
+        ⚡ Selecione ações para o relatório. <strong>★ sugeridas</strong> automaticamente pelos maiores scores.
+      </div>
+      <div style="background:var(--sf2);border:1px solid var(--bd);border-radius:9px;padding:13px 16px;min-width:260px">
+        <div style="font-size:11px;font-weight:700;color:var(--tx);margin-bottom:5px">🤖 Plano por IA — Personalizado por Setor</div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:10px;line-height:1.5">Gera intervenções específicas para cada setor com base no perfil de risco e ramo da empresa.</div>
+        <button class="bs p" id="ai-plan-btn" onclick="generateSectorActionPlan()" style="width:100%;padding:9px">🤖 Gerar Plano por IA</button>
+        <div id="ai-plan-area" style="margin-top:10px"></div>
+      </div>
+    </div>
+    <div class="action-filter" id="act-filter"></div>
+    <div class="action-list" id="act-list"></div>
+  </div>
+
+  <div id="panel-rel" class="panel" style="padding:22px;max-width:1380px;margin:0 auto">
+    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div><h2 style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700">Relatório Diagnóstico</h2><p style="font-size:12px;color:var(--mu);margin-top:3px">Pronto para impressão ou PDF</p></div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;color:var(--mu)">
+            <input type="checkbox" id="inc-dash" checked onchange="buildReport()"> Incluir dashboard
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mu)">
+            📅 <input type="text" id="rep-date" placeholder="Data do relatório"
+              style="background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;color:var(--tx);font-size:12px;width:160px"
+              oninput="reportDate=this.value;buildReport()">
+          </label>
+          <button class="bs p" style="padding:9px 18px;font-size:13px" onclick="printReport()">🖨 Imprimir</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--bd)">
+        <span style="font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Template:</span>
+        <div id="tpl-grid" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+        <input id="clinic-input" type="text" placeholder="Nome da clínica (salva preferência)"
+          style="margin-left:auto;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;color:var(--tx);font-size:11px;width:220px"
+          oninput="clinicName=this.value;saveClinicPref()">
+      </div>
+    </div>
+    <div class="rep-body" id="rep-body"></div>
+  </div>
+
+  <div id="panel-hist" class="panel" style="padding:22px;max-width:1380px;margin:0 auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <div><h2 style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700">Banco de Relatórios</h2></div>
+      <button class="bs o" onclick="clearHistory()" style="border-color:rgba(239,68,68,.3);color:#f87171">🗑 Limpar tudo</button>
+    </div>
+    <div id="hist-list"></div>
+  </div>
+</div>
+<div id="print-zone" style="display:none"></div>
+
 </body>
 </html>
