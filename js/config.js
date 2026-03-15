@@ -55,7 +55,7 @@ const INSTRUMENTS = {
       {name:"Exigências Cognitivas",               qs:[3,4]},           // Q4–Q5
       {name:"Exigências Emocionais",               qs:[5]},             // Q6
       {name:"Influência no Trabalho",              qs:[6],  invertedQs:[6]},  // Q7
-      {name:"Possibilidades de Desenvolvimento",   qs:[7,8],  invertedQs:[8]},  // Q8–Q9
+      {name:"Possibilidades de Desenvolvimento",   qs:[7,8],  invertedQs:[7,8]},  // Q8–Q9
       {name:"Previsibilidade",                     qs:[9,10],  invertedQs:[9,10]},  // Q10–Q11
       {name:"Transparência do Papel",              qs:[11], invertedQs:[11]},  // Q12
       {name:"Reconhecimento e Recompensas",        qs:[12,13],  invertedQs:[12,13]},  // Q13–Q14
@@ -66,7 +66,7 @@ const INSTRUMENTS = {
       {name:"Justiça e Respeito",                  qs:[20,21], invertedQs:[20,21]},  // Q21–Q22
       {name:"Auto-Eficácia",                       qs:[22], invertedQs:[22]},  // Q23
       {name:"Significado do Trabalho",             qs:[23,24],  invertedQs:[23,24]},  // Q24–Q25
-      {name:"Compromisso com o Local de Trabalho", qs:[25],},  // Q26
+      {name:"Compromisso com o Local de Trabalho", qs:[25], invertedQs:[25]},  // Q26
       {name:"Satisfação Laboral",                  qs:[26], invertedQs:[26]},  // Q27
       {name:"Insegurança Laboral",                 qs:[27]},                                 // Q28
       {name:"Saúde Geral",                         qs:[28],invertedQs:[28]},  // Q29
@@ -182,43 +182,34 @@ const INSTRUMENTS = {
     nQuestions: 76,
     scoring: 'copsoq',
     factors: [
-      // EXIGÊNCIAS LABORAIS — risco: score alto = maior exigência
-      // Nota: verificar se algum item de Exigências Quantitativas é positivamente redigido (ex: "Tem tempo suficiente?") e adicionar invertedQs se necessário
-      {name:"Exigências Quantitativas",            qs:[0,1,2]},
-      {name:"Ritmo de Trabalho",                   qs:[3]},
-      {name:"Exigências Cognitivas",               qs:[4,5,6]},
-      {name:"Exigências Emocionais",               qs:[7]},
-      // ORGANIZAÇÃO DO TRABALHO E CONTEÚDO — protetores
-      {name:"Influência no Trabalho",              qs:[8,9,10,11],   riskInverted:true},
-      {name:"Possibilidades de Desenvolvimento",   qs:[12,13,14],    riskInverted:true},
-      {name:"Significado do Trabalho",             qs:[15,16,17],    riskInverted:true},
-      {name:"Compromisso com o Local de Trabalho", qs:[18,19],       riskInverted:true},
-      // RELAÇÕES SOCIAIS E LIDERANÇA — protetores (exceto Conflitos de Papel)
-      {name:"Previsibilidade",                     qs:[20,21],       riskInverted:true},
-      {name:"Reconhecimento e Recompensas",        qs:[22,23,24],    riskInverted:true},
-      {name:"Transparência do Papel",              qs:[25,26,27],    riskInverted:true},
-      {name:"Conflitos de Papel",                  qs:[28,29,30]},
-      {name:"Qualidade da Liderança",              qs:[31,32,33,34], riskInverted:true},
-      {name:"Apoio Social de Superiores",          qs:[35,36,37],    riskInverted:true},
-      {name:"Apoio Social de Colegas",             qs:[38,39,40],    riskInverted:true},
-      // INTERFACE TRABALHO-INDIVÍDUO
-      {name:"Insegurança Laboral",                 qs:[41]},
-      {name:"Satisfação Laboral",                  qs:[42,43,44,45], riskInverted:true},
-      {name:"Conflito Trabalho-Família",           qs:[46,47,48]},
-      // VALORES NO LOCAL DE TRABALHO — protetores
-      {name:"Confiança Vertical",                  qs:[49,50,51],    riskInverted:true},
-      {name:"Confiança Horizontal",                qs:[52,53,54],    riskInverted:true},
-      {name:"Justiça e Respeito",                  qs:[55,56,57],    riskInverted:true},
-      {name:"Comunidade Social no Trabalho",       qs:[58,59,60],    riskInverted:true},
-      // PERSONALIDADE — protetor
-      {name:"Auto-Eficácia",                       qs:[61,62],       riskInverted:true},
-      // SAÚDE E BEM-ESTAR — Saúde Geral: protetor; demais: risco
-      {name:"Saúde Geral",                         qs:[63],          riskInverted:true},
-      {name:"Stress",                              qs:[64,65]},
+      {name:"Exigências Quantitativas",            qs:[0,1,2],},
+      {name:"Ritmo de Trabalho",                   qs:[3],},
+      {name:"Exigências Cognitivas",               qs:[4,5,6],},
+      {name:"Exigências Emocionais",               qs:[7],},
+      {name:"Influência no Trabalho",              qs:[8,9,10,11],  invertedQs:[8,9,10,11],},
+      {name:"Possibilidades de Desenvolvimento",   qs:[12,13,14], invertedQs:[12,13,14],},
+      {name:"Previsibilidade",                     qs:[15,16], invertedQs:[15,16],},
+      {name:"Transparência do Papel",              qs:[17,18,19], invertedQs:[17,18,19],},
+      {name:"Reconhecimento e Recompensas",        qs:[20,21,22], invertedQs:[20,21,22],},
+      {name:"Conflitos de Papel",                  qs:[23,24,25],},
+      {name:"Apoio Social de Colegas",             qs:[26,27,28], invertedQs:[26,27,28],},
+      {name:"Apoio Social de Superiores",          qs:[29,30,31], invertedQs:[29,30,31],},
+      {name:"Comunidade Social no Trabalho",       qs:[32,33,34], invertedQs:[32,33,34],},
+      {name:"Qualidade da Liderança",              qs:[35,36,37,38], invertedQs:[35,36,37,38],},
+      {name:"Confiança Horizontal",                qs:[39,40,41],},
+      {name:"Confiança Vertical",                  qs:[42,43,44], invertedQs:[42,43],},
+      {name:"Justiça e Respeito",                  qs:[45,46,47], invertedQs:[45,46,47],},
+      {name:"Auto-Eficácia",                       qs:[48,49], invertedQs:[48,49],},
+      {name:"Significado do Trabalho",             qs:[50,51,52], invertedQs:[50,51,52],},
+      {name:"Compromisso com o Local de Trabalho", qs:[53,54], invertedQs:[53,54],},
+      {name:"Satisfação Laboral",                  qs:[55,56,57,58], invertedQs:[55,56,57,58],},
+      {name:"Insegurança Laboral",                 qs:[59]},
+      {name:"Saúde Geral",                         qs:[60],invertedQs:[60],},
+      {name:"Conflito Trabalho-Família",           qs:[61,62,63],},
+      {name:"Problemas de Sono",                   qs:[64,65]},
       {name:"Burnout",                             qs:[66,67]},
-      {name:"Problemas de Sono",                   qs:[68,69]},
+      {name:"Stress",                              qs:[68,69]},
       {name:"Sintomas Depressivos",                qs:[70,71]},
-      // COMPORTAMENTOS OFENSIVOS — risco
       {name:"Comportamentos Ofensivos",            qs:[72,73,74,75]},
     ],
     dimensions: [
