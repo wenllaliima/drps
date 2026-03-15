@@ -83,7 +83,10 @@ function parseXlsxRows(rows, extraPdfRows=[]){
   const factorScores=inst.factors.map(f=>{
     const vals=f.qs.flatMap(qi=>{
       const ci=qCols[qi];
-      return ci!==undefined?data.map(r=>parseFloat(r[ci])).filter(v=>!isNaN(v)&&v>=1&&v<=5):[];
+      if(ci===undefined)return[];
+      const raw=data.map(r=>parseFloat(r[ci])).filter(v=>!isNaN(v)&&v>=1&&v<=5);
+      // Item-level inversion: positively-worded items inside demand factors (e.g. "Tem tempo suficiente?")
+      return (f.invertedQs&&f.invertedQs.includes(qi))?raw.map(v=>6-v):raw;
     });
     if(!vals.length)return 0;
     const m=avg(vals);
@@ -173,7 +176,9 @@ function parseXlsxRows(rows, extraPdfRows=[]){
     sectorScores[setor]=inst.factors.map(f=>{
       const vals=f.qs.flatMap(qi=>{
         const ci=qCols[qi];
-        return ci!==undefined?rows.map(r=>parseFloat(r[ci])).filter(v=>!isNaN(v)&&v>=1&&v<=5):[];
+        if(ci===undefined)return[];
+        const raw=rows.map(r=>parseFloat(r[ci])).filter(v=>!isNaN(v)&&v>=1&&v<=5);
+        return (f.invertedQs&&f.invertedQs.includes(qi))?raw.map(v=>6-v):raw;
       });
       if(!vals.length)return null;
       const m=avg(vals);

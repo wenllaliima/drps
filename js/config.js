@@ -48,41 +48,42 @@ const INSTRUMENTS = {
     name: 'COPSOQ II — Versão Curta',
     short: 'COPSOQ II Curta',
     nQuestions: 40,
-    scoring: 'copsoq', // mean * 25
+    scoring: 'copsoq', // score = (mean - 1) * 25 → 0-100
     factors: [
-      // EXIGÊNCIAS LABORAIS
-      {name:"Exigências Quantitativas",            qs:[0,1]},
+      // EXIGÊNCIAS LABORAIS — risco: score alto = maior exigência
+      // Q1 (qs[1]) = "Tem tempo suficiente?" — item positivo dentro de fator de demanda → inverter individualmente
+      {name:"Exigências Quantitativas",            qs:[0,1],   invertedQs:[1]},
       {name:"Ritmo de Trabalho",                   qs:[2]},
       {name:"Exigências Cognitivas",               qs:[3,4]},
       {name:"Exigências Emocionais",               qs:[5]},
-      // ORGANIZAÇÃO DO TRABALHO E CONTEÚDO
-      {name:"Influência no Trabalho",              qs:[6]},
-      {name:"Possibilidades de Desenvolvimento",   qs:[7,8]},
-      {name:"Significado do Trabalho",             qs:[9,10]},
-      {name:"Compromisso com o Local de Trabalho", qs:[11]},
-      // RELAÇÕES SOCIAIS E LIDERANÇA
-      {name:"Previsibilidade",                     qs:[12,13]},
-      {name:"Reconhecimento e Recompensas",        qs:[14,15]},
-      {name:"Transparência do Papel",              qs:[16]},
-      {name:"Qualidade da Liderança",              qs:[17]},
-      {name:"Apoio Social de Superiores",          qs:[18]},
+      // ORGANIZAÇÃO DO TRABALHO E CONTEÚDO — protetores: score alto = menos risco
+      {name:"Influência no Trabalho",              qs:[6],     riskInverted:true},
+      {name:"Possibilidades de Desenvolvimento",   qs:[7,8],   riskInverted:true},
+      {name:"Significado do Trabalho",             qs:[9,10],  riskInverted:true},
+      {name:"Compromisso com o Local de Trabalho", qs:[11],    riskInverted:true},
+      // RELAÇÕES SOCIAIS E LIDERANÇA — protetores
+      {name:"Previsibilidade",                     qs:[12,13], riskInverted:true},
+      {name:"Reconhecimento e Recompensas",        qs:[14,15], riskInverted:true},
+      {name:"Transparência do Papel",              qs:[16],    riskInverted:true},
+      {name:"Qualidade da Liderança",              qs:[17],    riskInverted:true},
+      {name:"Apoio Social de Superiores",          qs:[18],    riskInverted:true},
       // INTERFACE TRABALHO-INDIVÍDUO
       {name:"Insegurança Laboral",                 qs:[19]},
-      {name:"Satisfação Laboral",                  qs:[20]},
+      {name:"Satisfação Laboral",                  qs:[20],    riskInverted:true},
       {name:"Conflito Trabalho-Família",           qs:[21,22]},
-      // VALORES NO LOCAL DE TRABALHO
-      {name:"Confiança Vertical",                  qs:[23,24]},
-      {name:"Justiça e Respeito",                  qs:[25,26]},
-      {name:"Comunidade Social no Trabalho",       qs:[27]},
-      // PERSONALIDADE
-      {name:"Auto-Eficácia",                       qs:[28]},
-      // SAÚDE E BEM-ESTAR
-      {name:"Saúde Geral",                         qs:[29]},
+      // VALORES NO LOCAL DE TRABALHO — protetores
+      {name:"Confiança Vertical",                  qs:[23,24], riskInverted:true},
+      {name:"Justiça e Respeito",                  qs:[25,26], riskInverted:true},
+      {name:"Comunidade Social no Trabalho",       qs:[27],    riskInverted:true},
+      // PERSONALIDADE — protetor
+      {name:"Auto-Eficácia",                       qs:[28],    riskInverted:true},
+      // SAÚDE E BEM-ESTAR — Saúde Geral: score alto = boa saúde = protetor; demais = risco
+      {name:"Saúde Geral",                         qs:[29],    riskInverted:true},
       {name:"Stress",                              qs:[30,31]},
       {name:"Burnout",                             qs:[32,33]},
       {name:"Problemas de Sono",                   qs:[34]},
       {name:"Sintomas Depressivos",                qs:[35]},
-      // COMPORTAMENTOS OFENSIVOS
+      // COMPORTAMENTOS OFENSIVOS — risco
       {name:"Comportamentos Ofensivos",            qs:[36,37,38,39]},
     ],
     dimensions: [
@@ -123,7 +124,7 @@ const INSTRUMENTS = {
       "Sintomas de tristeza, irritabilidade ou ansiedade persistentes.",
       "Exposição a comportamentos hostis, assédio ou violência.",
     ],
-    formulaNote: 'Score COPSOQ = média das respostas × 25 · Escala 1–5 → 0–100 · Valores altos em Exigências = maior risco; valores altos em Recursos = fator protetor.'
+    formulaNote: 'Score COPSOQ II = (média − 1) × 25 → 0–100 · Escala Likert 1–5 · Itens positivos dentro de fatores de demanda são invertidos (6 − resposta) antes do cálculo · Fatores protetores (Recursos, Valores, Saúde Geral, Auto-Eficácia): risco exibido como 100 − score · Fatores de exigência/risco: score alto = maior risco.'
   },
   // ─── COPSOQ II ADAPTADO (Versão baixa escolaridade) ─────────────────────────
   copsoq2a: {
@@ -190,42 +191,43 @@ const INSTRUMENTS = {
     nQuestions: 76,
     scoring: 'copsoq',
     factors: [
-      // EXIGÊNCIAS LABORAIS
+      // EXIGÊNCIAS LABORAIS — risco: score alto = maior exigência
+      // Nota: verificar se algum item de Exigências Quantitativas é positivamente redigido (ex: "Tem tempo suficiente?") e adicionar invertedQs se necessário
       {name:"Exigências Quantitativas",            qs:[0,1,2]},
       {name:"Ritmo de Trabalho",                   qs:[3]},
       {name:"Exigências Cognitivas",               qs:[4,5,6]},
       {name:"Exigências Emocionais",               qs:[7]},
-      // ORGANIZAÇÃO DO TRABALHO E CONTEÚDO
-      {name:"Influência no Trabalho",              qs:[8,9,10,11]},
-      {name:"Possibilidades de Desenvolvimento",   qs:[12,13,14]},
-      {name:"Significado do Trabalho",             qs:[15,16,17]},
-      {name:"Compromisso com o Local de Trabalho", qs:[18,19]},
-      // RELAÇÕES SOCIAIS E LIDERANÇA
-      {name:"Previsibilidade",                     qs:[20,21]},
-      {name:"Reconhecimento e Recompensas",        qs:[22,23,24]},
-      {name:"Transparência do Papel",              qs:[25,26,27]},
+      // ORGANIZAÇÃO DO TRABALHO E CONTEÚDO — protetores
+      {name:"Influência no Trabalho",              qs:[8,9,10,11],   riskInverted:true},
+      {name:"Possibilidades de Desenvolvimento",   qs:[12,13,14],    riskInverted:true},
+      {name:"Significado do Trabalho",             qs:[15,16,17],    riskInverted:true},
+      {name:"Compromisso com o Local de Trabalho", qs:[18,19],       riskInverted:true},
+      // RELAÇÕES SOCIAIS E LIDERANÇA — protetores (exceto Conflitos de Papel)
+      {name:"Previsibilidade",                     qs:[20,21],       riskInverted:true},
+      {name:"Reconhecimento e Recompensas",        qs:[22,23,24],    riskInverted:true},
+      {name:"Transparência do Papel",              qs:[25,26,27],    riskInverted:true},
       {name:"Conflitos de Papel",                  qs:[28,29,30]},
-      {name:"Qualidade da Liderança",              qs:[31,32,33,34]},
-      {name:"Apoio Social de Superiores",          qs:[35,36,37]},
-      {name:"Apoio Social de Colegas",             qs:[38,39,40]},
+      {name:"Qualidade da Liderança",              qs:[31,32,33,34], riskInverted:true},
+      {name:"Apoio Social de Superiores",          qs:[35,36,37],    riskInverted:true},
+      {name:"Apoio Social de Colegas",             qs:[38,39,40],    riskInverted:true},
       // INTERFACE TRABALHO-INDIVÍDUO
       {name:"Insegurança Laboral",                 qs:[41]},
-      {name:"Satisfação Laboral",                  qs:[42,43,44,45]},
+      {name:"Satisfação Laboral",                  qs:[42,43,44,45], riskInverted:true},
       {name:"Conflito Trabalho-Família",           qs:[46,47,48]},
-      // VALORES NO LOCAL DE TRABALHO
-      {name:"Confiança Vertical",                  qs:[49,50,51]},
-      {name:"Confiança Horizontal",                qs:[52,53,54]},
-      {name:"Justiça e Respeito",                  qs:[55,56,57]},
-      {name:"Comunidade Social no Trabalho",       qs:[58,59,60]},
-      // PERSONALIDADE
-      {name:"Auto-Eficácia",                       qs:[61,62]},
-      // SAÚDE E BEM-ESTAR
-      {name:"Saúde Geral",                         qs:[63]},
+      // VALORES NO LOCAL DE TRABALHO — protetores
+      {name:"Confiança Vertical",                  qs:[49,50,51],    riskInverted:true},
+      {name:"Confiança Horizontal",                qs:[52,53,54],    riskInverted:true},
+      {name:"Justiça e Respeito",                  qs:[55,56,57],    riskInverted:true},
+      {name:"Comunidade Social no Trabalho",       qs:[58,59,60],    riskInverted:true},
+      // PERSONALIDADE — protetor
+      {name:"Auto-Eficácia",                       qs:[61,62],       riskInverted:true},
+      // SAÚDE E BEM-ESTAR — Saúde Geral: protetor; demais: risco
+      {name:"Saúde Geral",                         qs:[63],          riskInverted:true},
       {name:"Stress",                              qs:[64,65]},
       {name:"Burnout",                             qs:[66,67]},
       {name:"Problemas de Sono",                   qs:[68,69]},
       {name:"Sintomas Depressivos",                qs:[70,71]},
-      // COMPORTAMENTOS OFENSIVOS
+      // COMPORTAMENTOS OFENSIVOS — risco
       {name:"Comportamentos Ofensivos",            qs:[72,73,74,75]},
     ],
     dimensions: [
@@ -239,7 +241,7 @@ const INSTRUMENTS = {
       {name:"COMPORTAMENTOS OFENSIVOS",           abbr:"CO", factors:[28],                 color:"#64748b",desc:"Assédio, violência e comportamentos hostis."},
     ],
     defaultFontes: Array(29).fill("Fator identificado na avaliação — editar fonte geradora."),
-    formulaNote: 'Score COPSOQ = média × 25 · Escala 1–5 → 0–100 · Versão média com 29 fatores.'
+    formulaNote: 'Score COPSOQ II = (média − 1) × 25 → 0–100 · Escala Likert 1–5 · Fatores protetores (Recursos, Valores, Apoio, Satisfação, Saúde Geral, Auto-Eficácia): risco exibido como 100 − score · Conflitos de Papel, Insegurança e Exigências: score alto = maior risco · Versão média com 29 fatores.'
   },
 
   // ─── COPSOQ III — Estrutura validada para o Brasil (Rodrigues, 2020) ───────────
