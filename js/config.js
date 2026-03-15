@@ -47,84 +47,75 @@ const INSTRUMENTS = {
   copsoq2s: {
     name: 'COPSOQ II — Versão Curta',
     short: 'COPSOQ II Curta',
-    nQuestions: 40,
-    scoring: 'copsoq', // score = (mean - 1) * 25 → 0-100
+    nQuestions: 41,
+    scoring: 'copsoq',
     factors: [
-      // EXIGÊNCIAS LABORAIS — risco: score alto = maior exigência
-      // Q1 (qs[1]) = "Tem tempo suficiente?" — item positivo dentro de fator de demanda → inverter individualmente
-      {name:"Exigências Quantitativas",            qs:[0,1],   invertedQs:[1]},
-      {name:"Ritmo de Trabalho",                   qs:[2]},
-      {name:"Exigências Cognitivas",               qs:[3,4]},
-      {name:"Exigências Emocionais",               qs:[5]},
-      // ORGANIZAÇÃO DO TRABALHO E CONTEÚDO — protetores: score alto = menos risco
-      {name:"Influência no Trabalho",              qs:[6],     riskInverted:true},
-      {name:"Possibilidades de Desenvolvimento",   qs:[7,8],   riskInverted:true},
-      {name:"Significado do Trabalho",             qs:[9,10],  riskInverted:true},
-      {name:"Compromisso com o Local de Trabalho", qs:[11],    riskInverted:true},
-      // RELAÇÕES SOCIAIS E LIDERANÇA — protetores
-      {name:"Previsibilidade",                     qs:[12,13], riskInverted:true},
-      {name:"Reconhecimento e Recompensas",        qs:[14,15], riskInverted:true},
-      {name:"Transparência do Papel",              qs:[16],    riskInverted:true},
-      {name:"Qualidade da Liderança",              qs:[17],    riskInverted:true},
-      {name:"Apoio Social de Superiores",          qs:[18],    riskInverted:true},
-      // INTERFACE TRABALHO-INDIVÍDUO
-      {name:"Insegurança Laboral",                 qs:[19]},
-      {name:"Satisfação Laboral",                  qs:[20],    riskInverted:true},
-      {name:"Conflito Trabalho-Família",           qs:[21,22]},
-      // VALORES NO LOCAL DE TRABALHO — protetores
-      {name:"Confiança Vertical",                  qs:[23,24], riskInverted:true},
-      {name:"Justiça e Respeito",                  qs:[25,26], riskInverted:true},
-      {name:"Comunidade Social no Trabalho",       qs:[27],    riskInverted:true},
-      // PERSONALIDADE — protetor
-      {name:"Auto-Eficácia",                       qs:[28],    riskInverted:true},
-      // SAÚDE E BEM-ESTAR — Saúde Geral: score alto = boa saúde = protetor; demais = risco
-      {name:"Saúde Geral",                         qs:[29],    riskInverted:true},
-      {name:"Stress",                              qs:[30,31]},
-      {name:"Burnout",                             qs:[32,33]},
-      {name:"Problemas de Sono",                   qs:[34]},
-      {name:"Sintomas Depressivos",                qs:[35]},
-      // COMPORTAMENTOS OFENSIVOS — risco
-      {name:"Comportamentos Ofensivos",            qs:[36,37,38,39]},
+      {name:"Exigências Quantitativas",            qs:[0,1]},           // Q1–Q2
+      {name:"Ritmo de Trabalho",                   qs:[2]},             // Q3
+      {name:"Exigências Cognitivas",               qs:[3,4]},           // Q4–Q5
+      {name:"Exigências Emocionais",               qs:[5]},             // Q6
+      {name:"Influência no Trabalho",              qs:[6],  invertedQs:[6]},  // Q7
+      {name:"Possibilidades de Desenvolvimento",   qs:[7,8],  invertedQs:[8]},  // Q8–Q9
+      {name:"Previsibilidade",                     qs:[9,10],  invertedQs:[9,10]},  // Q10–Q11
+      {name:"Transparência do Papel",              qs:[11], invertedQs:[11]},  // Q12
+      {name:"Reconhecimento e Recompensas",        qs:[12,13],  invertedQs:[12,13]},  // Q13–Q14
+      {name:"Apoio Social de Superiores",          qs:[14],  invertedQs:[14]},  // Q15
+      {name:"Comunidade Social no Trabalho",       qs:[15],  invertedQs:[15]},  // Q16
+      {name:"Qualidade da Liderança",              qs:[16,17],  invertedQs:[16,17]},  // Q17–Q18
+      {name:"Confiança Vertical",                  qs:[18,19],  invertedQs:[18,19]},  // Q19–Q20
+      {name:"Justiça e Respeito",                  qs:[20,21], invertedQs:[20,21]},  // Q21–Q22
+      {name:"Auto-Eficácia",                       qs:[22], invertedQs:[22]},  // Q23
+      {name:"Significado do Trabalho",             qs:[23,24],  invertedQs:[23,24]},  // Q24–Q25
+      {name:"Compromisso com o Local de Trabalho", qs:[25],},  // Q26
+      {name:"Satisfação Laboral",                  qs:[26], invertedQs:[26]},  // Q27
+      {name:"Insegurança Laboral",                 qs:[27]},                                 // Q28
+      {name:"Saúde Geral",                         qs:[28],invertedQs:[28]},  // Q29
+      {name:"Conflito Trabalho-Família",           qs:[29,30]},                              // Q30–Q31
+      {name:"Problemas de Sono",                   qs:[31]},                                 // Q32
+      {name:"Burnout",                             qs:[32,33]},                              // Q33–Q34
+      {name:"Stress",                              qs:[34,35]},                              // Q35–Q36
+      {name:"Sintomas Depressivos",                qs:[36]},                                 // Q37
+      {name:"Comportamentos Ofensivos",            qs:[37,38,39,40]},                        // Q38–Q41
     ],
     dimensions: [
-      {name:"EXIGÊNCIAS LABORAIS",                abbr:"EL", factors:[0,1,2,3],         color:"#ef4444",desc:"Sobrecarga quantitativa, cognitiva, emocional e ritmo."},
-      {name:"ORGANIZAÇÃO DO TRABALHO E CONTEÚDO", abbr:"OTC",factors:[4,5,6,7],         color:"#f59e0b",desc:"Influência, desenvolvimento, significado e comprometimento."},
-      {name:"RELAÇÕES SOCIAIS E LIDERANÇA",       abbr:"REL",factors:[8,9,10,11,12],    color:"#3b82f6",desc:"Previsibilidade, reconhecimento, papel, liderança e apoio."},
-      {name:"INTERFACE TRABALHO-INDIVÍDUO",       abbr:"ITI",factors:[13,14,15],         color:"#8b5cf6",desc:"Insegurança, satisfação e conflito trabalho-família."},
-      {name:"VALORES NO LOCAL DE TRABALHO",       abbr:"VLT",factors:[16,17,18],         color:"#10b981",desc:"Confiança, justiça e comunidade organizacional."},
-      {name:"PERSONALIDADE",                      abbr:"PER",factors:[19],               color:"#06b6d4",desc:"Auto-eficácia profissional."},
-      {name:"SAÚDE E BEM-ESTAR",                  abbr:"SAU",factors:[20,21,22,23,24],   color:"#ec4899",desc:"Saúde geral, stress, burnout, sono e sintomas depressivos."},
-      {name:"COMPORTAMENTOS OFENSIVOS",           abbr:"CO", factors:[25],               color:"#64748b",desc:"Assédio, violência e comportamentos hostis."},
+      {name:"EXIGÊNCIAS LABORAIS",          abbr:"EL",  factors:[0,1,2,3],        color:"#ef4444", desc:"Sobrecarga quantitativa, cognitiva, emocional e ritmo."},
+      {name:"ORGANIZAÇÃO E CONTEÚDO",       abbr:"OTC", factors:[4,5,15,16],      color:"#f59e0b", desc:"Influência, desenvolvimento, significado e comprometimento."},
+      {name:"RELAÇÕES E LIDERANÇA",         abbr:"REL", factors:[6,7,8,9,10,11],  color:"#3b82f6", desc:"Previsibilidade, reconhecimento, papel, liderança e apoio."},
+      {name:"VALORES NO LOCAL DE TRABALHO", abbr:"VLT", factors:[12,13],          color:"#10b981", desc:"Confiança vertical e justiça organizacional."},
+      {name:"PERSONALIDADE",                abbr:"PER", factors:[14],             color:"#06b6d4", desc:"Auto-eficácia profissional."},
+      {name:"INTERFACE TRABALHO-INDIVÍDUO", abbr:"ITI", factors:[17,18,20],    color:"#8b5cf6", desc:"Satisfação, insegurança, saúde geral e conflito trabalho-família."},
+      {name:"SAÚDE E BEM-ESTAR",            abbr:"SAU", factors:[19,21,22,23,24],    color:"#ec4899", desc:"Sono, burnout, stress e sintomas depressivos."},
+      {name:"COMPORTAMENTOS OFENSIVOS",     abbr:"CO",  factors:[25],             color:"#64748b", desc:"Assédio, violência e comportamentos hostis."},
     ],
     defaultFontes: [
-      "Sobrecarga de tarefas e prazos apertados.",
-      "Ritmo de trabalho acelerado e sem pausas.",
-      "Alta demanda de concentração e memória.",
-      "Exigências emocionais no contato com situações ou pessoas difíceis.",
-      "Baixa autonomia e influência sobre as decisões.",
-      "Poucas oportunidades de aprendizado e crescimento.",
-      "Trabalho percebido como sem propósito ou importância.",
-      "Baixo envolvimento e identificação com a organização.",
-      "Falta de informação antecipada sobre mudanças.",
-      "Esforço não reconhecido pela organização.",
-      "Ambiguidade ou conflito nas responsabilidades.",
-      "Liderança ineficaz ou distante.",
-      "Falta de suporte da chefia.",
-      "Incerteza sobre a continuidade do emprego.",
-      "Baixa satisfação com as condições de trabalho.",
-      "Dificuldade em conciliar demandas do trabalho e da família.",
-      "Baixa confiança nas decisões da gestão.",
-      "Percepção de injustiça nas decisões e tratamento.",
-      "Clima organizacional desfavorável e falta de coesão.",
-      "Baixa crença nas próprias capacidades profissionais.",
-      "Saúde geral prejudicada pelas condições de trabalho.",
-      "Exposição continuada a situações estressantes.",
-      "Exaustão física e mental frequentes.",
-      "Dificuldades de sono relacionadas ao trabalho.",
-      "Sintomas de tristeza, irritabilidade ou ansiedade persistentes.",
-      "Exposição a comportamentos hostis, assédio ou violência.",
+      "Sobrecarga de tarefas e prazos apertados.",                                // F0
+      "Ritmo de trabalho acelerado e sem pausas.",                                // F1
+      "Alta demanda de concentração e memória.",                                  // F2
+      "Exigências emocionais no contato com situações ou pessoas difíceis.",      // F3
+      "Baixa autonomia e influência sobre as decisões.",                          // F4
+      "Poucas oportunidades de aprendizado e crescimento.",                       // F5
+      "Falta de informação antecipada sobre mudanças.",                           // F6
+      "Ambiguidade ou conflito nas responsabilidades.",                           // F7
+      "Esforço não reconhecido pela organização.",                                // F8
+      "Falta de suporte da chefia.",                                              // F9
+      "Clima organizacional desfavorável e falta de coesão.",                    // F10
+      "Liderança ineficaz ou distante.",                                          // F11
+      "Baixa confiança nas decisões da gestão.",                                  // F12
+      "Percepção de injustiça nas decisões e tratamento.",                        // F13
+      "Baixa crença nas próprias capacidades profissionais.",                     // F14
+      "Trabalho percebido como sem propósito ou importância.",                    // F15
+      "Baixo envolvimento e identificação com a organização.",                    // F16
+      "Baixa satisfação com as condições de trabalho.",                           // F17
+      "Incerteza sobre a continuidade do emprego.",                               // F18
+      "Saúde geral prejudicada pelas condições de trabalho.",                    // F19
+      "Dificuldade em conciliar demandas do trabalho e da família.",              // F20
+      "Dificuldades de sono relacionadas ao trabalho.",                           // F21
+      "Exaustão física e mental frequentes.",                                     // F22
+      "Exposição continuada a situações estressantes.",                           // F23
+      "Sintomas de tristeza, irritabilidade ou ansiedade persistentes.",          // F24
+      "Exposição a comportamentos hostis, assédio ou violência.",                 // F25
     ],
-    formulaNote: 'Score COPSOQ II = (média − 1) × 25 → 0–100 · Escala Likert 1–5 · Itens positivos dentro de fatores de demanda são invertidos (6 − resposta) antes do cálculo · Fatores protetores (Recursos, Valores, Saúde Geral, Auto-Eficácia): risco exibido como 100 − score · Fatores de exigência/risco: score alto = maior risco.'
+    formulaNote: 'Score COPSOQ II = (média − 1) × 25 → 0–100 · Escala Likert 1–5 · Com alguns itens invertidos · Fatores protetores (Recursos, Valores, Satisfação, Saúde Geral, Auto-Eficácia): risco exibido como score · Fatores de exigência/risco: score alto = maior risco.'
   },
   // ─── COPSOQ II ADAPTADO (Versão baixa escolaridade) ─────────────────────────
   copsoq2a: {

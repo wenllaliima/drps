@@ -29,7 +29,7 @@ function parseXlsxRows(rows, extraPdfRows=[]){
   if(qCols.length<inst.nQuestions){
     const numCols=hdrs.map((_,i)=>{
       const vals=data.slice(0,15).map(r=>parseFloat(r[i])).filter(v=>!isNaN(v)&&v>=1&&v<=5);
-      return vals.length>=5?i:-1;
+      return vals.length>=1?i:-1;
     }).filter(i=>i>=0);
     if(numCols.length>=inst.nQuestions){
       for(let s=0;s<=numCols.length-inst.nQuestions;s++){
@@ -79,16 +79,34 @@ function parseXlsxRows(rows, extraPdfRows=[]){
     n.style.display='none';
   }
 
-  // Compute factor scores (riskInverted: fatores protetores COPSOQ III são invertidos)
-  const factorScores=inst.factors.map(f=>{
+  // ── Debug: column detection ────────────────────────────────────────────────
+  console.group(`[DRPS] parseXlsxRows — ${INST} (n=${data.length})`);
+  console.log(`Columns detected: ${qCols.length}/${inst.nQuestions} questions | NPS col: ${npsCol>=0?`${npsCol} ("${(hdrs[npsCol]??'').substring(0,40)}")`:'not found'} | Setor col: ${setorCol>=0?`${setorCol} ("${(hdrs[setorCol]??'').substring(0,40)}")`:'not found'}`);
+  if(qCols.length){
+    console.table(qCols.map((col,i)=>({'Q#':i+1,'col idx':col,'header':(hdrs[col]??'').substring(0,60)})));
+  }
+
+  // Compute factor scores with per-factor debug output
+  console.group('Factor scores');
+  const factorScores=inst.factors.map((f,fi)=>{
+    const perQInfo=f.qs.map(qi=>{
+      const ci=qCols[qi];
+      if(ci===undefined)return{Q:qi+1,col:null,n:0,mean:null,missing:true};
+      const raw=data.map(r=>parseFloat(r[ci])).filter(v=>!isNaN(v)&&v>=1&&v<=5);
+      const inverted=!!(f.invertedQs&&f.invertedQs.includes(qi));
+      const vals=inverted?raw.map(v=>6-v):raw;
+      return{Q:qi+1,col:ci,hdr:(hdrs[ci]??'').substring(0,40),n:vals.length,mean:vals.length?+avg(vals).toFixed(3):null,inverted};
+    });
     const vals=f.qs.flatMap(qi=>{
       const ci=qCols[qi];
       if(ci===undefined)return[];
       const raw=data.map(r=>parseFloat(r[ci])).filter(v=>!isNaN(v)&&v>=1&&v<=5);
-      // Item-level inversion: positively-worded items inside demand factors (e.g. "Tem tempo suficiente?")
       return (f.invertedQs&&f.invertedQs.includes(qi))?raw.map(v=>6-v):raw;
     });
-    if(!vals.length)return 0;
+    if(!vals.length){
+      console.warn(`F${fi} [${f.name}]: NO DATA — qs:${JSON.stringify(f.qs)} → cols:${JSON.stringify(f.qs.map(qi=>qCols[qi]))}`);
+      return 0;
+    }
     const m=avg(vals);
     // Special: scale10 = questão com escala 0-10 (ex: saúde geral Q50)
     if(f.scale10){
@@ -96,24 +114,38 @@ function parseXlsxRows(rows, extraPdfRows=[]){
         const ci=qCols[qi];
         return ci!==undefined?data.map(r=>parseFloat(r[ci])).filter(v=>!isNaN(v)&&v>=0&&v<=10):[];
       });
-      if(!vals10.length)return 0;
+      if(!vals10.length){console.warn(`F${fi} [${f.name}]: scale10 NO DATA`);return 0;}
       const raw10=(avg(vals10)/10)*100;
-      return f.riskInverted?Math.max(0,Math.round((100-raw10)*10)/10):Math.round(raw10*10)/10;
+      const score=f.riskInverted?Math.max(0,Math.round((100-raw10)*10)/10):Math.round(raw10*10)/10;
+      console.log(`F${fi} [${f.name}]`,{perQInfo,mean10:+avg(vals10).toFixed(2),raw10:+raw10.toFixed(1),score,riskInverted:!!f.riskInverted,scale10:true});
+      return score;
     }
-    // Special: binary questions (Sim=1/Não=0) — treated as 0 or 100
-    // Detect if values are mostly 0/1 (binary) vs 1-5 (Likert)
-    const isBinary=vals.length>0&&vals.every(v=>v===0||v===1);
+    // Binary questions (Sim=1/Não=0): requires explicit f.binary=true flag.
+    // Auto-detection is unreliable: Likert answers of all-1s would also pass every(v===0||v===1).
+    // Binary vals are re-collected here because the main vals array filters out 0s (v>=1).
+    const isBinary=f.binary===true;
     let raw;
     if(isBinary){
-      raw=avg(vals)*100; // 0=nenhum sim, 100=todos sim
+      const binaryVals=f.qs.flatMap(qi=>{
+        const ci=qCols[qi];
+        return ci!==undefined?data.map(r=>parseFloat(r[ci])).filter(v=>!isNaN(v)&&(v===0||v===1)):[];
+      });
+      raw=binaryVals.length?avg(binaryVals)*100:0;
     } else {
       raw=inst.scoring==='copsoq'?(m-1)*25:(m-1)/4*100;
     }
     // Fatores protetores (riskInverted): escore bruto alto = proteção → invertemos para mostrar risco residual
-    return (f.riskInverted)?Math.max(0,Math.round((100-raw)*10)/10):Math.round(raw*10)/10;
+    const score=(f.riskInverted)?Math.max(0,Math.round((100-raw)*10)/10):Math.round(raw*10)/10;
+    console.log(`F${fi} [${f.name}]`,{qs:f.qs,perQInfo,n:vals.length,mean:+m.toFixed(3),raw:+raw.toFixed(1),score,riskInverted:!!f.riskInverted,binary:isBinary});
+    return score;
   });
+  console.groupEnd();
 
   const dimScores=inst.dimensions.map(d=>avg(d.factors.map(fi=>factorScores[fi])));
+  console.group('Dimension scores');
+  inst.dimensions.forEach((d,di)=>console.log(`D${di} [${d.name}] factors:${JSON.stringify(d.factors)} → ${dimScores[di].toFixed(1)}`));
+  console.groupEnd();
+  console.groupEnd(); // [DRPS] group
 
   // NPS
   const npsVals=npsCol>=0?data.map(r=>parseFloat(r[npsCol])).filter(v=>!isNaN(v)&&v>=0&&v<=10):[];
