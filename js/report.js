@@ -1,5 +1,5 @@
 // ── SHARED SECTION BUILDER (content identical, colors parametric) ──────────
-function _commonSections(d, headColor, accentColor, noteBg) {
+function _commonSections(d, headColor, accentColor, noteBg, opts={}) {
   const {G,inst,srt,fontes,dimRows,fatRows,actsHtml,sectorTableHtml,
          sectorPlanHtml,dashHtml,adesaoHtml,sigName,sigCrp,repDateDisplay,
          allLow,setorLines,pct,avg,classif,rc,rb} = d;
@@ -66,25 +66,26 @@ function _commonSections(d, headColor, accentColor, noteBg) {
   </div>
 </div>
 
-<div class="rep-sec">
+${opts.noSetor?'':
+`<div class="rep-sec">
   <span class="rst">6. Análise por Setor</span>
   <p class="rtx">Score de risco por fator × setor. Linha <strong>GERAL</strong> = média de todos os respondentes.</p>
   ${sectorTableHtml}
-</div>
+</div>`}
 
 <div class="rep-sec">
-  <span class="rst">7. Plano de Ação</span>
+  <span class="rst">${opts.noSetor?'6':'7'}. Plano de Ação</span>
   <p class="rtx">Intervenções por setor geradas com base no perfil de risco${G.meta.ramo?' e no ramo de atuação ('+G.meta.ramo+')':''}:</p>
   ${sectorPlanHtml}
   ${actsHtml?`<div style="margin-top:14px;padding:12px 14px;background:${noteBg};border-left:4px solid ${accentColor};border-radius:0 8px 8px 0;font-size:11px;color:#1e293b"><strong style="color:${headColor}">Ações complementares:</strong> ${actsHtml}</div>`:''}
 </div>
 
 <div class="rep-sec">
-  <span class="rst">8. Conclusão</span>
+  <span class="rst">${opts.noSetor?'7':'8'}. Conclusão</span>
   <p class="rtx">${allLow?'Os resultados indicam situação <strong>favorável</strong> — todos os fatores classificados como BAIXO.':'Os resultados apontam fatores que requerem atenção e intervenção planejada.'} Recomenda-se integrar os riscos identificados ao <strong>PGR (NR-1)</strong> com monitoramento periódico${G.meta.ramo?', considerando as características inerentes ao ramo de '+G.meta.ramo:''}.</p>
 </div>
 
-${dashHtml}
+${opts.noSetor?'':dashHtml}
 
 <div style="padding:40px 44px 32px;display:flex;flex-direction:column;align-items:center">
   <div style="font-size:12px;color:#64748b;font-style:italic;margin-bottom:52px;text-align:center">Brasília/DF, ${repDateDisplay}.</div>
@@ -301,6 +302,60 @@ clinica_cinza: {
   </div>
 </div>
 ${_commonSections(d,'#1e293b','#475569','#f8fafc')}`;
+  }
+},
+
+// ────────────────────────────────────────────────────────────────────────────
+// T5 — SIMPLIFICADO (sem análise por setor e sem dashboard)
+// ────────────────────────────────────────────────────────────────────────────
+simples: {
+  id:'simples', label:'Simplificado — Sem Setor/Dashboard', preview:'linear-gradient(135deg,#1e293b,#475569)', accent:'#334155',
+  buildHtml(d){
+    const {G,inst,logoHtml} = d;
+    return `
+<style>
+.rbdg{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.3px}
+.rb-lo{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.rb-mo{background:#fef9c3;color:#713f12;border:1px solid #fde047}
+.rb-hi{background:#fee2e2;color:#7f1d1d;border:1px solid #fca5a5}
+.rep-sec{padding:22px 44px;border-bottom:2px solid #e2e8f0}
+.rst{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#475569;padding-bottom:7px;border-bottom:2px solid #1e293b;margin-bottom:16px;display:block}
+.rtx{font-size:13px;line-height:1.8;color:#1e293b;margin-bottom:12px}
+.rnote{background:#f8fafc;border:1px solid #cbd5e1;border-left:4px solid #475569;padding:12px 16px;font-size:12px;color:#1e293b;font-weight:500;line-height:1.6;margin:12px 0}
+.rtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px}
+.rtable th{background:#1e293b;color:#f8fafc;padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.rtable td{padding:8px 12px;border-bottom:1px solid #e2e8f0;color:#1e293b;vertical-align:top}
+.rtable tr:nth-child(even) td{background:#f8fafc}
+.nps-grid{display:grid;grid-template-columns:repeat(3,1fr);border:2px solid #cbd5e1;border-radius:4px;overflow:hidden;margin:12px 0}
+.nps-cell{padding:16px;text-align:center;border-right:1px solid #cbd5e1}
+.nps-cell:last-child{border-right:none}
+.pb{page-break-before:always}
+</style>
+<div style="background:#fff;border-top:10px solid #1e293b;padding:36px 44px 24px">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:20px;border-bottom:2px solid #e2e8f0;margin-bottom:22px">
+    <div>${logoHtml}</div>
+    <div style="text-align:right">
+      <div style="font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px">Instrumento</div>
+      <div style="font-size:13px;font-weight:800;color:#1e293b;margin-top:2px">${inst.short}</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px;gap:20px">
+    <div>
+      <div style="font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px">RELATÓRIO TÉCNICO NR-1</div>
+      <div style="font-size:28px;font-weight:800;color:#1e293b;line-height:1.2;margin-bottom:4px">Diagnóstico de<br>Riscos Psicossociais</div>
+      <div style="font-size:12px;color:#475569;font-weight:500">Avaliação das condições psicossociais · ${G.meta.empresa}</div>
+    </div>
+    <div style="flex-shrink:0;background:#f1f5f9;border:2px solid #e2e8f0;border-radius:8px;padding:14px 18px;min-width:180px">
+      <div style="font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Dados da Avaliação</div>
+      ${[['Unidade',G.meta.unidade],['Ramo',G.meta.ramo||'—'],['Período',G.meta.periodo]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid #e2e8f0"><span style="font-size:10px;color:#64748b;font-weight:500">${l}</span><span style="font-size:10px;font-weight:700;color:#1e293b;text-align:right">${v}</span></div>`).join('')}
+    </div>
+  </div>
+  <div style="background:#1e293b;padding:10px 16px;border-radius:6px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:10px;color:#94a3b8">Elaborado por: <strong style="color:#f8fafc">${G.meta.avaliador}</strong></div>
+    <div style="font-size:10px;color:#64748b">${G.meta.psi}</div>
+  </div>
+</div>
+${_commonSections(d,'#1e293b','#475569','#f8fafc',{noSetor:true})}`;
   }
 },
 
