@@ -38,7 +38,7 @@ function _commonSections(d, headColor, accentColor, noteBg, opts={}) {
     <tr><td><strong>Instrumento</strong></td><td>${inst.name}</td></tr>
     <tr><td><strong>Aplicação</strong></td><td>${G.meta.pdfCount>0&&G.meta.xlsxCount>0?`Híbrida — ${G.meta.xlsxCount} via Google Forms (online) + ${G.meta.pdfCount} via formulário físico digitalizado`:G.meta.pdfCount>0?`Formulário físico digitalizado (${G.meta.pdfCount} respondente${G.meta.pdfCount>1?'s':''})`:'Virtual — formulário online, anônimo e voluntário'}</td></tr>
     <tr><td><strong>Responsável técnico</strong></td><td>${G.meta.psi}</td></tr>
-    <tr><td><strong>Setores</strong></td><td style="font-size:11px">${setorLines||'N/D'}</td></tr>
+    <tr><td style="vertical-align:top"><strong>Setores</strong></td><td style="padding:4px 8px">${setorLines||'N/D'}</td></tr>
   </table>
   <div class="rnote"><strong>Fórmula de cálculo:</strong> ${inst.formulaNote}</div>
 </div>
