@@ -154,7 +154,7 @@ function buildReport(){
       +'<thead><tr>'
       +'<th style="text-align:left;padding:4px 8px;background:#f1f5f9;border:1px solid #e2e8f0;font-size:10px;color:#475569">Setor</th>'
       +'<th style="text-align:center;padding:4px 8px;background:#f1f5f9;border:1px solid #e2e8f0;font-size:10px;color:#475569;width:80px">N</th>'
-      +'<th style="text-align:center;padding:4px 8px;background:#f1f5f9;border:1px solid #e2e8f0;font-size:10px;color:#475569;width:80px">% do total</th>'
+      +'<th style="text-align:center;padding:4px 8px;background:#f1f5f9;border:1px solid #e2e8f0;font-size:10px;color:#475569;width:80px">% dos respondentes</th>'
       +'</tr></thead><tbody>'
       +Object.entries(G.demo.setor).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>
         `<tr style="background:${i%2?'#f8fafc':'#fff'}">`
