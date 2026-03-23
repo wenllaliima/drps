@@ -112,7 +112,7 @@ ambrac: {
 .rb-lo{background:#dcfce7;color:#166534;border:1px solid #86efac}
 .rb-mo{background:#fef9c3;color:#713f12;border:1px solid #fde047}
 .rb-hi{background:#fee2e2;color:#7f1d1d;border:1px solid #fca5a5}
-.rep-sec{padding:24px 44px;border-bottom:2px solid #f1f5f9}
+.rep-sec{padding:24px 44px;border-bottom:2px solid #f1f5f9;break-inside:avoid;page-break-inside:avoid}
 .rst{font-family:'Syne',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.4px;color:#0d2137;border-bottom:3px solid #8dc63f;padding-bottom:7px;margin-bottom:16px;display:inline-block}
 .rtx{font-size:13px;line-height:1.8;color:#1e293b;margin-bottom:12px}
 .rnote{background:#f0fdf4;border-left:4px solid #8dc63f;padding:12px 16px;border-radius:0 8px 8px 0;font-size:12px;color:#166534;font-weight:500;line-height:1.6;margin:12px 0}
@@ -159,7 +159,7 @@ clinica_azul: {
 .rb-lo{background:#dcfce7;color:#166534;border:1px solid #86efac}
 .rb-mo{background:#fef9c3;color:#713f12;border:1px solid #fde047}
 .rb-hi{background:#fee2e2;color:#7f1d1d;border:1px solid #fca5a5}
-.rep-sec{padding:22px 44px;border-bottom:1px solid #dbeafe}
+.rep-sec{padding:22px 44px;border-bottom:1px solid #dbeafe;break-inside:avoid;page-break-inside:avoid}
 .rst{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#1e3a8a;border-left:5px solid #2563eb;padding:3px 0 3px 12px;margin-bottom:16px;display:block;background:linear-gradient(90deg,#eff6ff,transparent)}
 .rtx{font-size:13px;line-height:1.8;color:#1e293b;margin-bottom:12px}
 .rnote{background:#eff6ff;border-left:4px solid #2563eb;padding:12px 16px;border-radius:0 8px 8px 0;font-size:12px;color:#1e3a8a;font-weight:500;line-height:1.6;margin:12px 0}
@@ -210,7 +210,7 @@ clinica_vinho: {
 .rb-lo{background:#dcfce7;color:#166534;border:1px solid #86efac}
 .rb-mo{background:#fef9c3;color:#713f12;border:1px solid #fde047}
 .rb-hi{background:#fee2e2;color:#7f1d1d;border:1px solid #fca5a5}
-.rep-sec{padding:22px 44px;border-bottom:1px solid #ffe4e6}
+.rep-sec{padding:22px 44px;border-bottom:1px solid #ffe4e6;break-inside:avoid;page-break-inside:avoid}
 .rst{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#9f1239;display:flex;align-items:center;gap:10px;margin-bottom:16px}
 .rst::before{content:'';display:block;width:20px;height:3px;background:#be123c;border-radius:2px;flex-shrink:0}
 .rtx{font-size:13px;line-height:1.8;color:#1e293b;margin-bottom:12px}
@@ -264,7 +264,7 @@ clinica_cinza: {
 .rb-lo{background:#dcfce7;color:#166534;border:1px solid #86efac}
 .rb-mo{background:#fef9c3;color:#713f12;border:1px solid #fde047}
 .rb-hi{background:#fee2e2;color:#7f1d1d;border:1px solid #fca5a5}
-.rep-sec{padding:22px 44px;border-bottom:2px solid #e2e8f0}
+.rep-sec{padding:22px 44px;border-bottom:2px solid #e2e8f0;break-inside:avoid;page-break-inside:avoid}
 .rst{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#475569;padding-bottom:7px;border-bottom:2px solid #1e293b;margin-bottom:16px;display:block}
 .rtx{font-size:13px;line-height:1.8;color:#1e293b;margin-bottom:12px}
 .rnote{background:#f8fafc;border:1px solid #cbd5e1;border-left:4px solid #475569;padding:12px 16px;font-size:12px;color:#1e293b;font-weight:500;line-height:1.6;margin:12px 0}
@@ -318,7 +318,7 @@ simples: {
 .rb-lo{background:#dcfce7;color:#166534;border:1px solid #86efac}
 .rb-mo{background:#fef9c3;color:#713f12;border:1px solid #fde047}
 .rb-hi{background:#fee2e2;color:#7f1d1d;border:1px solid #fca5a5}
-.rep-sec{padding:22px 44px;border-bottom:2px solid #e2e8f0}
+.rep-sec{padding:22px 44px;border-bottom:2px solid #e2e8f0;break-inside:avoid;page-break-inside:avoid}
 .rst{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#475569;padding-bottom:7px;border-bottom:2px solid #1e293b;margin-bottom:16px;display:block}
 .rtx{font-size:13px;line-height:1.8;color:#1e293b;margin-bottom:12px}
 .rnote{background:#f8fafc;border:1px solid #cbd5e1;border-left:4px solid #475569;padding:12px 16px;font-size:12px;color:#1e293b;font-weight:500;line-height:1.6;margin:12px 0}
