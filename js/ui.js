@@ -60,100 +60,85 @@ function buildSectorReportHtml(){
   if(!G.sectorScores||!Object.keys(G.sectorScores).length)return '';
   const sectors=Object.keys(G.sectorScores).sort((a,b)=>(G.demo.setor[b]||0)-(G.demo.setor[a]||0));
   const factors=inst.factors;
-  const gAvg=G.factorScores;
 
-  // Abbreviate factor names to max 10 chars for column headers
-  const abbr=n=>{
-    const map={
-      'Excesso de Demandas':'Exc.Dem','Ociosidade':'Ociosid.','Baixo Controle':'B.Contr.',
-      'Falta de Apoio':'F.Apoio','Baixa Clareza':'B.Clareza','Conflitos e más relações':'Conflitos',
-      'Falta de reconhecimento':'F.Reconh.','Injustiça no trabalho':'Injustiça',
-      'Má Gestão de Mudanças':'Gestão Mud.','Problemas de comunicação':'P.Comun.',
-      'Assédio':'Assédio','Violência e agressão':'Violência',
-      'Satisfação com o Trabalho e Autoeficácia':'Satisf./AE','Saúde e Bem-Estar':'Saúde',
-      'Demandas e Conflito Trabalho-Vida':'Dem.Conf.','Influência no Trabalho':'Influência',
-      'Senso de Comunidade e Significado':'Comunidade','Reconhecimento e Qualidade da Liderança':'Reconh./Lid.',
-      'Insegurança no Trabalho':'Insegurança',
-    };
-    return map[n]||n.substring(0,10);
-  };
+  const cl=v=>v<50?'#15803d':v<75?'#854d0e':'#991b1b';
+  const bg=v=>v<50?'#f0fdf4':v<75?'#fefce8':'#fef2f2';
+  const badge=v=>v<50?'BAIXO':v<75?'MODERADO':'ALTO';
+  const sev=v=>v>=75?'Grave':v>=50?'Alta':v>=25?'Moderada':'Baixa';
+  const lv=v=>v>=75?'alta':v>=50?'média':'baixa';
 
-  // Build ONE table per chunk of factors (max 8 per table) so it fits on print
-  const CHUNK=8;
-  let html='';
+  const sectorsHtml=sectors.map(s=>{
+    const sc=G.sectorScores[s]||[];
+    const n=G.demo.setor[s]||0;
+    const pctN=G.n>0?Math.round(n/G.n*100):0;
 
-  for(let start=0;start<factors.length;start+=CHUNK){
-    const chunk=factors.slice(start,start+CHUNK);
-    const chunkIdx=chunk.map((_,ci)=>start+ci);
+    // Tabela de todos os fatores ordenados por risco (maior → menor)
+    const factorsWithScore=factors.map((f,fi)=>({f,fi,v:sc[fi]??null}))
+      .filter(x=>x.v!==null)
+      .sort((a,b)=>b.v-a.v);
 
-    const thCols=chunk.map((f,ci)=>{
-      const v=gAvg[start+ci];
-      const bg=v<50?'rgba(16,185,129,.15)':v<75?'rgba(245,158,11,.15)':'rgba(239,68,68,.15)';
-      return`<th style="text-align:center;font-size:9px;padding:5px 3px;font-weight:700;background:${bg};min-width:56px;border-right:1px solid rgba(255,255,255,.1)">${abbr(f.name)}</th>`;
-    }).join('');
+    const riskRows=factorsWithScore.map(({f,v})=>`
+      <tr>
+        <td style="font-weight:600;font-size:10px;padding:5px 8px">${f.name}</td>
+        <td style="text-align:center;font-family:monospace;font-size:11px;font-weight:700;color:${cl(v)};background:${bg(v)}">${v.toFixed(1)}%</td>
+        <td style="text-align:center;font-size:10px;font-weight:700;color:${cl(v)}">${badge(v)}</td>
+        <td style="text-align:center;font-size:10px;color:${cl(v)};font-weight:600">${sev(v)}</td>
+        <td style="font-size:9px;color:#64748b;padding:5px 8px">${f.dim||'—'}</td>
+      </tr>`).join('');
 
-    const rows=sectors.map(s=>{
-      const sc=G.sectorScores[s]||[];
-      const n=G.demo.setor[s]||0;
-      const pctN=G.n>0?(n/G.n*100).toFixed(0):0;
-      const chunkVals=chunkIdx.map(ci=>sc[ci]??null);
-      const valid=chunkVals.filter(v=>v!==null);
-      const avgS=valid.length?valid.reduce((a,b)=>a+b,0)/valid.length:0;
-      const cols=chunkVals.map(v=>{
-        if(v===null)return`<td style="text-align:center;color:#aaa;font-size:10px;border-right:1px solid #f1f5f9">—</td>`;
-        const bg=v<50?'#f0fdf4':v<75?'#fefce8':'#fef2f2';
-        const cl=v<50?'#15803d':v<75?'#854d0e':'#991b1b';
-        return`<td style="text-align:center;background:${bg};font-family:monospace;font-size:10px;font-weight:700;color:${cl};border-right:1px solid #e5e7eb">${v.toFixed(1)}</td>`;
+    // Ações do ALIB para fatores com risco moderado ou alto (≥50)
+    const riskFactors=factorsWithScore.filter(x=>x.v>=50);
+    let actsHtml='';
+    if(riskFactors.length){
+      actsHtml=riskFactors.map(({f,fi,v})=>{
+        const level=lv(v);
+        const acts=ALIB.filter(a=>a.f===fi&&(a.lv===level||(v>=75&&a.lv==='média')));
+        if(!acts.length)return'';
+        const typeColor={'Ergonomia':'#0369a1','Processo':'#7c3aed','RH':'#b45309','Comunicação':'#0f766e',
+          'Suporte':'#15803d','Cultura':'#6d28d9','Reconhecimento':'#b45309','Transparência':'#0369a1',
+          'Autonomia':'#0f766e','Participação':'#7c3aed','Organização':'#b45309','Política':'#991b1b',
+          'Ética':'#991b1b','Inovação':'#0369a1','Desenvolvimento':'#7c3aed','Tecnologia':'#0f766e'};
+        return`<div style="margin-bottom:8px">
+          <div style="font-size:10px;font-weight:700;color:#1e293b;margin-bottom:4px;padding:3px 0;border-bottom:1px solid #e2e8f0">${f.name} <span style="font-size:9px;font-weight:400;color:${cl(v)}">${v.toFixed(1)}% · ${badge(v)}</span></div>
+          ${acts.map(a=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 8px;background:#fff;border:1px solid #e5e7eb;border-radius:5px;margin-bottom:4px;border-left:3px solid ${typeColor[a.type]||'#64748b'}">
+            <span style="font-size:8px;font-weight:700;color:${typeColor[a.type]||'#64748b'};white-space:nowrap;padding-top:1px">${a.type}</span>
+            <div><span style="font-size:10px;font-weight:700;color:#1e293b">${a.title}</span><span style="font-size:9px;color:#64748b;margin-left:6px">(${a.target})</span><div style="font-size:9.5px;color:#475569;margin-top:2px;line-height:1.4">${a.desc}</div></div>
+          </div>`).join('')}
+        </div>`;
       }).join('');
-      const avgBg=avgS<50?'#dcfce7':avgS<75?'#fef9c3':'#fee2e2';
-      const avgCl=avgS<50?'#15803d':avgS<75?'#854d0e':'#991b1b';
-      return`<tr>
-        <td style="font-weight:600;font-size:10px;padding:5px 8px;border-bottom:1px solid #f1f5f9;white-space:nowrap;border-right:1px solid #e5e7eb">${s}</td>
-        <td style="text-align:center;font-family:monospace;font-size:9px;color:#64748b;padding:5px 4px;border-bottom:1px solid #f1f5f9;border-right:1px solid #e5e7eb">${n}·${pctN}%</td>
-        ${cols}
-        <td style="text-align:center;background:${avgBg};font-family:monospace;font-size:10px;font-weight:700;color:${avgCl};border-left:2px solid #cbd5e1">${avgS.toFixed(1)}</td>
-      </tr>`;
-    }).join('');
+    }else{
+      actsHtml='<p style="font-size:10px;color:#15803d;font-style:italic">Nenhum fator com risco moderado ou alto identificado neste setor.</p>';
+    }
 
-    const geralCols=chunkIdx.map(ci=>{
-      const v=gAvg[ci];
-      const bg=v<50?'#166534':v<75?'#78350f':'#7f1d1d';
-      const cl=v<50?'#86efac':v<75?'#fde68a':'#fca5a5';
-      return`<td style="text-align:center;background:${bg};font-family:monospace;font-size:10px;font-weight:700;color:${cl};border-right:1px solid rgba(255,255,255,.1)">${v.toFixed(1)}</td>`;
-    }).join('');
-    const avgGeral=chunkIdx.reduce((s,ci)=>s+gAvg[ci],0)/chunkIdx.length;
-    const avgGeralBg=avgGeral<50?'#166534':avgGeral<75?'#78350f':'#7f1d1d';
-    const avgGeralCl=avgGeral<50?'#86efac':avgGeral<75?'#fde68a':'#fca5a5';
+    const valid=factorsWithScore.map(x=>x.v);
+    const avg=valid.length?valid.reduce((a,b)=>a+b,0)/valid.length:0;
 
-    const chunkLabel=factors.length>CHUNK?` — Fatores ${start+1} a ${Math.min(start+CHUNK,factors.length)}`:'';
-    html+=`
-    <div style="margin-bottom:14px;break-inside:avoid">
-      ${chunkLabel?`<div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Parte ${Math.floor(start/CHUNK)+1}${chunkLabel}</div>`:''}
-      <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #e2e8f0">
+    return`<div style="margin-bottom:20px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;break-inside:avoid">
+      <div style="background:#0d2137;color:#fff;padding:8px 14px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-weight:700;font-size:11px">${s}</span>
+        <span style="font-size:10px;opacity:.8">${n} respondentes · ${pctN}% do total · Média: <strong style="color:${cl(avg)}">${avg.toFixed(1)}%</strong></span>
+      </div>
+      <div style="padding:10px 12px">
+        <div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Fatores de Risco</div>
+        <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #e2e8f0;margin-bottom:12px">
           <thead>
-            <tr style="background:#0d2137;color:#fff">
-              <th style="text-align:left;padding:6px 8px;font-size:9px;white-space:nowrap;border-right:1px solid rgba(255,255,255,.1)">Setor</th>
-              <th style="text-align:center;padding:6px 4px;font-size:9px;white-space:nowrap;border-right:1px solid rgba(255,255,255,.1)">N · %</th>
-              ${thCols}
-              <th style="text-align:center;padding:6px 4px;font-size:9px;border-left:2px solid rgba(255,255,255,.2)">Média</th>
+            <tr style="background:#f8fafc">
+              <th style="text-align:left;padding:5px 8px;font-size:9px;font-weight:700;color:#475569">Fator</th>
+              <th style="text-align:center;width:70px;font-size:9px;font-weight:700;color:#475569">Score</th>
+              <th style="text-align:center;width:90px;font-size:9px;font-weight:700;color:#475569">Classif.</th>
+              <th style="text-align:center;width:75px;font-size:9px;font-weight:700;color:#475569">Sever.</th>
+              <th style="text-align:center;width:50px;font-size:9px;font-weight:700;color:#475569">Dim.</th>
             </tr>
           </thead>
-          <tbody>
-            ${rows}
-            <tr style="background:#0d2137">
-              <td style="font-weight:700;font-size:9px;color:#8dc63f;padding:5px 8px;border-right:1px solid rgba(255,255,255,.1)">GERAL</td>
-              <td style="text-align:center;font-family:monospace;font-size:9px;color:#94a3b8;padding:5px 4px;border-right:1px solid rgba(255,255,255,.1)">${G.n}·100%</td>
-              ${geralCols}
-              <td style="text-align:center;background:${avgGeralBg};font-family:monospace;font-size:10px;font-weight:700;color:${avgGeralCl};border-left:2px solid rgba(255,255,255,.2)">${avgGeral.toFixed(1)}</td>
-            </tr>
-          </tbody>
+          <tbody>${riskRows}</tbody>
         </table>
+        <div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Ações de Mitigação</div>
+        ${actsHtml}
       </div>
     </div>`;
-  }
+  }).join('');
 
-  return`<div style="margin:14px 0">${html}<div style="font-size:9px;color:#888;margin-top:4px">🟢 &lt;50% BAIXO · 🟡 50–74% MODERADO · 🔴 ≥75% ALTO</div></div>`;
+  return`<div style="margin:14px 0">${sectorsHtml}<div style="font-size:9px;color:#888;margin-top:4px">🟢 &lt;50% BAIXO · 🟡 50–74% MODERADO · 🔴 ≥75% ALTO</div></div>`;
 }
 
 function buildReport(){
