@@ -2,16 +2,34 @@ function parseXlsxRows(rows, extraPdfRows=[]){
   const hdrs=rows[0].map(h=>String(h).toLowerCase().trim());
   const data=rows.slice(1).filter(r=>r.some(c=>c!==''));
 
-  // Pre-process: convert text health-scale answers to numeric (e.g. COPSOQ "Em geral, sente que sua saúde é?")
-  const healthTextMap={'excelente':5,'muito boa':4,'muito bom':4,'boa':3,'bom':3,'razoável':2,'razoavel':2,'ruim':1,'péssima':1,'pessima':1};
+  // Pre-process: convert Portuguese Likert text answers to numeric values (handles form exports with text responses)
+  const textMap={
+    // health scale
+    'excelente':5,'muito boa':4,'muito bom':4,'boa':3,'bom':3,'razoável':2,'razoavel':2,'ruim':1,
+    // frequency scale
+    'nunca/quase nunca':1,'raramente':2,'algumas vezes':3,'frequentemente':4,'sempre':5,
+    // degree/extent scale (+ real-data typo variants)
+    'em muita pouca medida':1,'e muita pouca medida':1,
+    'em pequena medida':2,'em pequena media':2,
+    'um pouco':3,
+    'em grande medida':4,
+    'em muita grande medida':5,
+    // satisfaction scale
+    'muito insatisfeito':1,'insatisfeito':2,'indiferente':3,'satisfeito':4,'muito satisfeito':5,
+    // self-description scale (self-efficacy items, 4-point: 1,2,4,5)
+    'não me descreve':1,'descreve-me um pouco':2,'descreve-me muito bem':4,'descreve-me perfeitamente':5
+  };
+  const unmatchedStrings=new Set();
   data.forEach(row=>{
     for(let i=0;i<row.length;i++){
       if(typeof row[i]==='string'){
         const lc=row[i].trim().toLowerCase();
-        if(healthTextMap[lc]!==undefined) row[i]=healthTextMap[lc];
+        if(textMap[lc]!==undefined) row[i]=textMap[lc];
+        else if(lc.length>1) unmatchedStrings.add(row[i].trim());
       }
     }
   });
+  if(unmatchedStrings.size) console.warn('[DRPS] Text values not matched in textMap (check for typos):',[ ...unmatchedStrings]);
   const inst=INSTRUMENTS[INST];
 
   // Auto-detect NPS
@@ -37,6 +55,20 @@ function parseXlsxRows(rows, extraPdfRows=[]){
         if(sl.every((v,i)=>i===0||v===sl[i-1]+1)){qCols=sl;break;}
       }
       if(qCols.length<inst.nQuestions)qCols=numCols.slice(0,inst.nQuestions);
+    }
+    // Secondary fallback: instruments with non-Likert question columns (e.g. binary exposure qs)
+    // may have numCols.length < nQuestions. Find the longest consecutive run of numeric cols
+    // and derive a linear qCols from its start (gaps are tolerated — factor scoring skips NaN).
+    if(qCols.length<inst.nQuestions && numCols.length>0){
+      let bestStart=numCols[0],bestLen=1,curLen=1;
+      for(let i=1;i<numCols.length;i++){
+        if(numCols[i]===numCols[i-1]+1){curLen++;}
+        else{curLen=1;}
+        if(curLen>bestLen){bestLen=curLen;bestStart=numCols[i-curLen+1];}
+      }
+      if(bestLen>=30){
+        qCols=Array.from({length:inst.nQuestions},(_,i)=>bestStart+i);
+      }
     }
   }
   // NPS fallback — look for col with values 0-10 (not restricted to 1-5)

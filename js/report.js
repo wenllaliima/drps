@@ -4,6 +4,7 @@ function _commonSections(d, headColor, accentColor, noteBg, opts={}) {
          sectorPlanHtml,dashHtml,adesaoHtml,sigName,sigCrp,repDateDisplay,
          allLow,setorLines,pct,avg,classif,rc,rb} = d;
   const th=`background:${headColor};color:#fff`;
+  const noNps=G.inst==='copsoq3'; // used for NPS section
 
   const npsHtml=`
 <div class="nps-grid">
@@ -43,20 +44,20 @@ function _commonSections(d, headColor, accentColor, noteBg, opts={}) {
   <div class="rnote"><strong>Fórmula de cálculo:</strong> ${inst.formulaNote}</div>
 </div>
 
-<div class="rep-sec">
+${noNps?'':`<div class="rep-sec">
   <span class="rst">3. NPS Interno</span>
   ${npsHtml}
-</div>
+</div>`}
 
 <div class="rep-sec">
-  <span class="rst">4. Resultados por Dimensão</span>
+  <span class="rst">${noNps?'3':'4'}. Resultados por Dimensão</span>
   <table class="rtable"><thead><tr>
     <th style="${th}">Dimensão</th><th style="${th}">Score</th><th style="${th}">Classificação</th><th style="${th}">Descrição</th>
   </tr></thead><tbody>${dimRows}</tbody></table>
 </div>
 
 <div class="rep-sec">
-  <span class="rst">5. Resultados por Fator</span>
+  <span class="rst">${noNps?'4':'5'}. Resultados por Fator</span>
   <div style="overflow-x:auto">
     <table class="rtable" style="font-size:11px"><thead><tr>
       <th style="${th}">Fator</th><th style="${th}">Quest.</th><th style="${th}">Score</th>
@@ -68,20 +69,20 @@ function _commonSections(d, headColor, accentColor, noteBg, opts={}) {
 
 ${opts.noSetor?'':
 `<div class="rep-sec">
-  <span class="rst">6. Análise por Setor</span>
+  <span class="rst">${noNps?'5':'6'}. Análise por Setor</span>
   <p class="rtx">Score de risco por fator × setor. Linha <strong>GERAL</strong> = média de todos os respondentes.</p>
   ${sectorTableHtml}
 </div>`}
 
 <div class="rep-sec">
-  <span class="rst">${opts.noSetor?'6':'7'}. Plano de Ação</span>
+  <span class="rst">${opts.noSetor?(noNps?'5':'6'):(noNps?'6':'7')}. Plano de Ação</span>
   <p class="rtx">Intervenções por setor geradas com base no perfil de risco${G.meta.ramo?' e no ramo de atuação ('+G.meta.ramo+')':''}:</p>
   ${sectorPlanHtml}
   ${actsHtml?`<div style="margin-top:14px;padding:12px 14px;background:${noteBg};border-left:4px solid ${accentColor};border-radius:0 8px 8px 0;font-size:11px;color:#1e293b"><strong style="color:${headColor}">Ações complementares:</strong> ${actsHtml}</div>`:''}
 </div>
 
 <div class="rep-sec">
-  <span class="rst">${opts.noSetor?'7':'8'}. Conclusão</span>
+  <span class="rst">${opts.noSetor?(noNps?'6':'7'):(noNps?'7':'8')}. Conclusão</span>
   <p class="rtx">${allLow?'Os resultados indicam situação <strong>favorável</strong> — todos os fatores classificados como BAIXO.':'Os resultados apontam fatores que requerem atenção e intervenção planejada.'} Recomenda-se integrar os riscos identificados ao <strong>PGR (NR-1)</strong> com monitoramento periódico${G.meta.ramo?', considerando as características inerentes ao ramo de '+G.meta.ramo:''}.</p>
 </div>
 

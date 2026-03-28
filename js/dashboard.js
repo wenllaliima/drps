@@ -4,7 +4,7 @@ function buildDash(){
     <div id="kpi-row" class="kpi-row" style="margin-bottom:18px"></div>
     <div class="g3" style="margin-bottom:16px">
       <div class="card"><div class="ct">Fatores de Risco</div><div style="height:260px"><canvas id="ch-bar"></canvas></div></div>
-      <div class="card"><div class="ct">NPS Interno</div><div class="nps-wrap"><div class="nps-ring"><canvas id="ch-nps"></canvas><div class="nps-ctr"><div class="nps-num" id="npsnm"></div><div class="nps-lbl">NPS</div></div></div><div class="nps-rows" id="npsrows"></div></div></div>
+      <div class="card"${G.inst==='copsoq3'?' style="display:none"':''}><div class="ct">NPS Interno</div><div class="nps-wrap"><div class="nps-ring"><canvas id="ch-nps"></canvas><div class="nps-ctr"><div class="nps-num" id="npsnm"></div><div class="nps-lbl">NPS</div></div></div><div class="nps-rows" id="npsrows"></div></div></div>
       <div class="card"><div class="ct">Respondentes por Setor</div><div style="height:200px"><canvas id="ch-set"></canvas></div></div>
     </div>
     <div class="ct" style="margin-bottom:12px">Dimensões</div>
