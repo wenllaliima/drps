@@ -254,7 +254,7 @@ const INSTRUMENTS = {
   copsoq3: {
     name: 'COPSOQ III — Brasil (Rodrigues, 2020)',
     short: 'COPSOQ III BR',
-    nQuestions: 79,
+    nQuestions: 125,
     scoring: 'copsoq', // score = (média − 1) × 25 → 0–100
     // Subversões disponíveis para seleção pelo usuário
     subversions: [
