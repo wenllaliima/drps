@@ -22,7 +22,7 @@ const INSTRUMENTS = {
     dimensions: [
       {name:"EXIGÊNCIAS LABORAIS",abbr:"EL",factors:[0,1],color:"#4f8ef7",desc:"Carga física e mental: pressão por prazos, volume e demandas emocionais."},
       {name:"ORGANIZAÇÃO DO TRABALHO",abbr:"OTC",factors:[2,8],color:"#22c55e",desc:"Clareza de tarefas, autonomia, variedade e previsibilidade."},
-      {name:"RELAÇÕES SOCIAIS",abbr:"RSL",factors:[3,5,7],color:"#7c5cfc",desc:"Qualidade das relações com colegas e líderes."},
+      {name:"RELAÇÕES SOCIAIS",abbr:"RSL",factors:[3,5,9],color:"#7c5cfc",desc:"Qualidade das relações com colegas e líderes."},
       {name:"INTERFACE TRABALHO-INDIVÍDUO",abbr:"ITI",factors:[4],color:"#06b6d4",desc:"Equilíbrio entre trabalho e vida pessoal."},
       {name:"VALORES NO TRABALHO",abbr:"VLT",factors:[6,7],color:"#f59e0b",desc:"Alinhamento entre valores pessoais e organizacionais."},
       {name:"COMPORTAMENTOS OFENSIVOS",abbr:"CO",factors:[10,11],color:"#ec4899",desc:"Assédio, violência, discriminação ou bullying."},

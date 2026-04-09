@@ -1,5 +1,6 @@
 function buildDash(){
   dc('bar');dc('nps');dc('set');
+  if(G.n===0){document.getElementById('panel-dash').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:10px;color:var(--mu);text-align:center"><div style="font-size:36px">⚠️</div><div style="font-size:15px;font-weight:700;color:var(--tx)">Nenhum respondente</div><div style="font-size:12px">Não houve adesão à pesquisa — sem dados para exibir.</div></div>`;return;}
   document.getElementById('panel-dash').innerHTML=`
     <div id="kpi-row" class="kpi-row" style="margin-bottom:18px"></div>
     <div class="g3" style="margin-bottom:16px">
@@ -54,6 +55,7 @@ function buildDash(){
 }
 
 function buildFat(){
+  if(G.n===0){document.getElementById('panel-fat').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:10px;color:var(--mu);text-align:center"><div style="font-size:36px">⚠️</div><div style="font-size:15px;font-weight:700;color:var(--tx)">Nenhum respondente</div><div style="font-size:12px">Não houve adesão à pesquisa — sem dados para exibir.</div></div>`;return;}
   document.getElementById('panel-fat').innerHTML=`
     <div class="g2" style="margin-bottom:16px">
       <div class="card"><div class="ct">Top Fatores de Risco</div><div id="ranking"></div></div>
@@ -98,6 +100,7 @@ function buildFat(){
 
 function buildDemo(){
   dc('sex');dc('set2');dc('civ');
+  if(G.n===0){document.getElementById('panel-demo').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:10px;color:var(--mu);text-align:center"><div style="font-size:36px">⚠️</div><div style="font-size:15px;font-weight:700;color:var(--tx)">Nenhum respondente</div><div style="font-size:12px">Não houve adesão à pesquisa — sem dados para exibir.</div></div>`;return;}
   document.getElementById('panel-demo').innerHTML=`
     <div class="g2 mb">
       <div class="card"><div class="ct">Sexo</div><div style="display:flex;gap:20px;align-items:center"><div style="flex-shrink:0;width:140px;height:140px;position:relative"><canvas id="ch-sex"></canvas></div><div id="sexbars" style="flex:1"></div></div></div>

@@ -2,6 +2,36 @@ function parseXlsxRows(rows, extraPdfRows=[]){
   const hdrs=rows[0].map(h=>String(h).toLowerCase().trim());
   const data=rows.slice(1).filter(r=>r.some(c=>c!==''));
 
+  if(!data.length){
+    const inst0=INSTRUMENTS[INST];
+    const totalRef0=parseInt(document.getElementById('f-total').value)||0;
+    G={
+      meta:{
+        empresa:document.getElementById('f-emp').value||'N/D',
+        ramo:document.getElementById('f-ramo').value||'',
+        unidade:document.getElementById('f-uni').value||'N/D',
+        periodo:document.getElementById('f-per').value||'N/D',
+        avaliador:document.getElementById('f-ava').value||'N/D',
+        psi:document.getElementById('f-psi').value||'N/D',
+        totalRef:totalRef0, adesaoPct:0
+      },
+      inst:INST, n:0,
+      factorScores:inst0.factors.map(()=>0),
+      dimScores:inst0.dimensions?inst0.dimensions.map(()=>0):[],
+      nps:{det:0,neu:0,pro:0,score:0,total:0},
+      demo:{setor:{},faixa:{},sexo:{},civil:{},escol:{}},
+      sectorScores:{},
+      logo:logoDataUrl,
+      timestamp:new Date().toISOString(),
+      pdfCount:extraPdfRows?extraPdfRows.length:0,
+      xlsxCount:rows.length>1?rows.length-1:0
+    };
+    fontes=[...inst0.defaultFontes];
+    selActs.clear();
+    buildApp();
+    return;
+  }
+
   // Pre-process: convert Portuguese Likert text answers to numeric values (handles form exports with text responses)
   const textMap={
     // health scale

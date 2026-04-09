@@ -1,7 +1,8 @@
 // ═══════ STATE ════════════════════════════════════════════════════════════════
 let G={}, INST='aot', fontes=[], selActs=new Set(), charts={},
     logoDataUrl='', historyDB=[], reportDate='', sectorActions={},
-    activeTemplate='ambrac', clinicName='', pdfFiles=[], pdfRows=[];
+    activeTemplate='ambrac', clinicName='', pdfFiles=[], pdfRows=[],
+    upFile=null;
 
 const avg=a=>a.length?a.reduce((s,v)=>s+v,0)/a.length:0;
 const classif=s=>s<50?'BAIXO':s<75?'MODERADO':'ALTO';

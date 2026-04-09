@@ -16,7 +16,8 @@ function backToUpload(){
   drop.querySelector('.drop-icon').textContent='📊';
   drop.querySelector('p').innerHTML='<strong>Clique para selecionar</strong> ou arraste aqui';
   document.getElementById('btn-go').disabled=true;document.getElementById('btn-go').textContent='↑ Selecione um arquivo para continuar';
-  upFile=null;
+  upFile=null; pdfFiles=[]; pdfRows=[];
+  renderPdfList();
 }
 
 function printReport(){

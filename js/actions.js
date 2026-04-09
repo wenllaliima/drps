@@ -192,7 +192,7 @@ function renderSectorActionPlan(){
 }
 
 function sectorActionPlanHtml(){
-  if(!sectorActions?.setores?.length)return'<p style="font-size:12px;color:#888;font-style:italic">Clique em "Gerar Plano por IA" na aba Ações para gerar um plano personalizado por setor.</p>';
+  if(!sectorActions?.setores?.length)return'';
   const prazoColor={'Imediato':'#B71C1C','Curto prazo':'#E65100','Médio prazo':'#1565C0'};
   const prazoFg={'Imediato':'#ffebee','Curto prazo':'#fff3e0','Médio prazo':'#e3f2fd'};
   return sectorActions.setores.map(s=>`
