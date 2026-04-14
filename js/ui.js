@@ -141,6 +141,91 @@ function buildSectorReportHtml(){
   return`<div style="margin:14px 0">${sectorsHtml}<div style="font-size:9px;color:#888;margin-top:4px">🟢 &lt;50% BAIXO · 🟡 50–74% MODERADO · 🔴 ≥75% ALTO</div></div>`;
 }
 
+// ─── UNIT SCORES TABLE FOR REPORT ─────────────────────────────────────────────
+function buildUnitReportHtml(){
+  const inst=INSTRUMENTS[G.inst];
+  if(!G.unitScores||!Object.keys(G.unitScores).length)return '';
+  const units=Object.keys(G.unitScores).sort((a,b)=>(G.demo.unidade[b]||0)-(G.demo.unidade[a]||0));
+  const factors=inst.factors;
+
+  const cl=v=>v<50?'#15803d':v<75?'#854d0e':'#991b1b';
+  const bg=v=>v<50?'#f0fdf4':v<75?'#fefce8':'#fef2f2';
+  const badge=v=>v<50?'BAIXO':v<75?'MODERADO':'ALTO';
+  const sev=v=>v>=75?'Grave':v>=50?'Alta':v>=25?'Moderada':'Baixa';
+  const lv=v=>v>=75?'alta':v>=50?'média':'baixa';
+
+  const unitsHtml=units.map(u=>{
+    const sc=G.unitScores[u]||[];
+    const n=G.demo.unidade[u]||0;
+    const pctN=G.n>0?Math.round(n/G.n*100):0;
+
+    const factorsWithScore=factors.map((f,fi)=>({f,fi,v:sc[fi]??null}))
+      .filter(x=>x.v!==null)
+      .sort((a,b)=>b.v-a.v);
+
+    const riskRows=factorsWithScore.map(({f,v})=>`
+      <tr>
+        <td style="font-weight:600;font-size:10px;padding:5px 8px">${f.name}</td>
+        <td style="text-align:center;font-family:monospace;font-size:11px;font-weight:700;color:${cl(v)};background:${bg(v)}">${v.toFixed(1)}%</td>
+        <td style="text-align:center;font-size:10px;font-weight:700;color:${cl(v)}">${badge(v)}</td>
+        <td style="text-align:center;font-size:10px;color:${cl(v)};font-weight:600">${sev(v)}</td>
+        <td style="font-size:9px;color:#64748b;padding:5px 8px">${f.dim||'—'}</td>
+      </tr>`).join('');
+
+    const riskFactors=factorsWithScore.filter(x=>x.v>=50);
+    let actsHtml='';
+    if(riskFactors.length){
+      actsHtml=riskFactors.map(({f,fi,v})=>{
+        const level=lv(v);
+        const acts=ALIB.filter(a=>a.f===fi&&(a.lv===level||(v>=75&&a.lv==='média')));
+        if(!acts.length)return'';
+        const typeColor={'Ergonomia':'#0369a1','Processo':'#7c3aed','RH':'#b45309','Comunicação':'#0f766e',
+          'Suporte':'#15803d','Cultura':'#6d28d9','Reconhecimento':'#b45309','Transparência':'#0369a1',
+          'Autonomia':'#0f766e','Participação':'#7c3aed','Organização':'#b45309','Política':'#991b1b',
+          'Ética':'#991b1b','Inovação':'#0369a1','Desenvolvimento':'#7c3aed','Tecnologia':'#0f766e'};
+        return`<div style="margin-bottom:8px">
+          <div style="font-size:10px;font-weight:700;color:#1e293b;margin-bottom:4px;padding:3px 0;border-bottom:1px solid #e2e8f0">${f.name} <span style="font-size:9px;font-weight:400;color:${cl(v)}">${v.toFixed(1)}% · ${badge(v)}</span></div>
+          ${acts.map(a=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 8px;background:#fff;border:1px solid #e5e7eb;border-radius:5px;margin-bottom:4px;border-left:3px solid ${typeColor[a.type]||'#64748b'}">
+            <span style="font-size:8px;font-weight:700;color:${typeColor[a.type]||'#64748b'};white-space:nowrap;padding-top:1px">${a.type}</span>
+            <div><span style="font-size:10px;font-weight:700;color:#1e293b">${a.title}</span><span style="font-size:9px;color:#64748b;margin-left:6px">(${a.target})</span><div style="font-size:9.5px;color:#475569;margin-top:2px;line-height:1.4">${a.desc}</div></div>
+          </div>`).join('')}
+        </div>`;
+      }).join('');
+    }else{
+      actsHtml='<p style="font-size:10px;color:#15803d;font-style:italic">Nenhum fator com risco moderado ou alto identificado nesta unidade.</p>';
+    }
+
+    const valid=factorsWithScore.map(x=>x.v);
+    const avgVal=valid.length?valid.reduce((a,b)=>a+b,0)/valid.length:0;
+
+    return`<div style="margin-bottom:20px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;break-inside:avoid">
+      <div style="background:#1e3a5f;color:#fff;padding:8px 14px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-weight:700;font-size:11px">${u}</span>
+        <span style="font-size:10px;opacity:.8">${n} respondentes · ${pctN}% do total · Média: <strong style="color:${cl(avgVal)}">${avgVal.toFixed(1)}%</strong></span>
+      </div>
+      <div style="padding:10px 12px">
+        <div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Fatores de Risco</div>
+        <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #e2e8f0;margin-bottom:12px">
+          <thead>
+            <tr style="background:#f8fafc">
+              <th style="text-align:left;padding:5px 8px;font-size:9px;font-weight:700;color:#475569">Fator</th>
+              <th style="text-align:center;width:70px;font-size:9px;font-weight:700;color:#475569">Score</th>
+              <th style="text-align:center;width:90px;font-size:9px;font-weight:700;color:#475569">Classif.</th>
+              <th style="text-align:center;width:75px;font-size:9px;font-weight:700;color:#475569">Sever.</th>
+              <th style="text-align:center;width:50px;font-size:9px;font-weight:700;color:#475569">Dim.</th>
+            </tr>
+          </thead>
+          <tbody>${riskRows}</tbody>
+        </table>
+        <div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Ações de Mitigação</div>
+        ${actsHtml}
+      </div>
+    </div>`;
+  }).join('');
+
+  return`<div style="margin:14px 0">${unitsHtml}<div style="font-size:9px;color:#888;margin-top:4px">🟢 &lt;50% BAIXO · 🟡 50–74% MODERADO · 🔴 ≥75% ALTO</div></div>`;
+}
+
 function buildReport(){
   const incD=document.getElementById('inc-dash')?.checked!==false;
   // Sync date field
@@ -194,6 +279,7 @@ function buildReport(){
   const tplData = {
     G, inst, srt, fontes, dimRows, fatRows,
     actsHtml, sectorTableHtml: buildSectorReportHtml(),
+    unitTableHtml: buildUnitReportHtml(),
     sectorPlanHtml: sectorActionPlanHtml(),
     dashHtml, adesaoHtml, logoHtml, sigName, sigCrp, repDateDisplay, allLow,
     setorLines, mainSet, pct, avg, classif, rc, rb,

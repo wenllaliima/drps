@@ -1,10 +1,19 @@
 // ── SHARED SECTION BUILDER (content identical, colors parametric) ──────────
 function _commonSections(d, headColor, accentColor, noteBg, opts={}) {
-  const {G,inst,srt,fontes,dimRows,fatRows,actsHtml,sectorTableHtml,
+  const {G,inst,srt,fontes,dimRows,fatRows,actsHtml,sectorTableHtml,unitTableHtml,
          sectorPlanHtml,dashHtml,adesaoHtml,sigName,sigCrp,repDateDisplay,
          allLow,setorLines,pct,avg,classif,rc,rb} = d;
   const th=`background:${headColor};color:#fff`;
   const noNps=G.inst==='copsoq3'; // used for NPS section
+  const hasUnit=!!(unitTableHtml&&unitTableHtml.trim());
+
+  // Dynamic section numbering
+  let _s=2;
+  if(!noNps)_s++;
+  const snDim=++_s, snFat=++_s;
+  const snSetor=opts.noSetor?null:++_s;
+  const snUnit=(hasUnit&&!opts.noSetor)?++_s:null;
+  const snPlano=++_s, snConc=++_s;
 
   if(G.n===0) return `
 <div class="pb"></div>
@@ -78,14 +87,14 @@ ${noNps?'':`<div class="rep-sec">
 </div>`}
 
 <div class="rep-sec">
-  <span class="rst">${noNps?'3':'4'}. Resultados por Dimensão</span>
+  <span class="rst">${snDim}. Resultados por Dimensão</span>
   <table class="rtable"><thead><tr>
     <th style="${th}">Dimensão</th><th style="${th}">Score</th><th style="${th}">Classificação</th><th style="${th}">Descrição</th>
   </tr></thead><tbody>${dimRows}</tbody></table>
 </div>
 
 <div class="rep-sec">
-  <span class="rst">${noNps?'4':'5'}. Resultados por Fator</span>
+  <span class="rst">${snFat}. Resultados por Fator</span>
   <div class="rtbl-wrap">
     <table class="rtable" style="font-size:11px"><thead><tr>
       <th style="${th}">Fator</th><th style="${th}">Quest.</th><th style="${th}">Score</th>
@@ -97,20 +106,26 @@ ${noNps?'':`<div class="rep-sec">
 
 ${opts.noSetor?'':
 `<div class="rep-sec">
-  <span class="rst">${noNps?'5':'6'}. Análise por Setor</span>
+  <span class="rst">${snSetor}. Análise por Setor</span>
   <p class="rtx">Score de risco por fator × setor. Linha <strong>GERAL</strong> = média de todos os respondentes.</p>
   ${sectorTableHtml}
 </div>`}
 
+${(hasUnit&&!opts.noSetor)?`<div class="rep-sec">
+  <span class="rst">${snUnit}. Análise por Unidade</span>
+  <p class="rtx">Score de risco por fator × unidade organizacional.</p>
+  ${unitTableHtml}
+</div>`:''}
+
 <div class="rep-sec">
-  <span class="rst">${opts.noSetor?(noNps?'5':'6'):(noNps?'6':'7')}. Plano de Ação</span>
+  <span class="rst">${snPlano}. Plano de Ação</span>
   <p class="rtx">Intervenções por setor geradas com base no perfil de risco${G.meta.ramo?' e no ramo de atuação ('+G.meta.ramo+')':''}:</p>
   ${sectorPlanHtml}
   ${actsHtml?`<div style="margin-top:14px;padding:12px 14px;background:${noteBg};border-left:4px solid ${accentColor};border-radius:0 8px 8px 0;font-size:11px;color:#1e293b"><strong style="color:${headColor}">Ações complementares:</strong> ${actsHtml}</div>`:''}
 </div>
 
 <div class="rep-sec">
-  <span class="rst">${opts.noSetor?(noNps?'6':'7'):(noNps?'7':'8')}. Conclusão</span>
+  <span class="rst">${snConc}. Conclusão</span>
   <p class="rtx">${allLow?'Os resultados indicam situação <strong>favorável</strong> — todos os fatores classificados como BAIXO.':'Os resultados apontam fatores que requerem atenção e intervenção planejada.'} Recomenda-se integrar os riscos identificados ao <strong>PGR (NR-1)</strong> com monitoramento periódico${G.meta.ramo?', considerando as características inerentes ao ramo de '+G.meta.ramo:''}.</p>
 </div>
 

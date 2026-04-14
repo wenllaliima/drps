@@ -66,6 +66,8 @@ function parseXlsxRows(rows, extraPdfRows=[]){
   let npsCol=hdrs.findIndex(h=>h.includes('0 a 10')||(h.includes('indica')&&h.includes('empresa'))||h.includes('recomendaria'));
   // Auto-detect setor
   let setorCol=hdrs.findIndex(h=>h.includes('setor')||h.includes('sector'));
+  // Auto-detect unidade (per-respondent column, distinct from meta field)
+  let unitCol=hdrs.findIndex(h=>(h.includes('unidade')||h.includes('filial')||h.includes('estabelecimento'))&&!h.includes('medida'));
 
   // Auto-detect question columns
   let qCols=[];
@@ -126,6 +128,12 @@ function parseXlsxRows(rows, extraPdfRows=[]){
     if(i<1||qCols.includes(i)||i===npsCol)return false;
     const vals=data.slice(0,5).map(r=>String(r[i]));
     return vals.every(v=>isNaN(parseFloat(v))&&v.length>2);
+  });}
+  // Unidade fallback — text column distinct from setor/nps cols
+  if(unitCol<0){unitCol=hdrs.findIndex((_,i)=>{
+    if(i<1||qCols.includes(i)||i===npsCol||i===setorCol)return false;
+    const h=hdrs[i];
+    return h.includes('unidade')||h.includes('filial')||h.includes('estabelecimento');
   });}
 
   let notice='';
@@ -281,6 +289,32 @@ function parseXlsxRows(rows, extraPdfRows=[]){
     });
   });
 
+  // Compute per-unit factor scores (unidade column)
+  const unitData={};
+  if(unitCol>=0){
+    data.forEach(row=>{
+      const u=String(row[unitCol]).trim();
+      if(!u||u==='undefined')return;
+      if(!unitData[u])unitData[u]=[];
+      unitData[u].push(row);
+    });
+  }
+  const unitScores={};
+  Object.entries(unitData).forEach(([unidade,rows])=>{
+    unitScores[unidade]=inst.factors.map(f=>{
+      const vals=f.qs.flatMap(qi=>{
+        const ci=qCols[qi];
+        if(ci===undefined)return[];
+        const raw=rows.map(r=>parseFloat(r[ci])).filter(v=>!isNaN(v)&&v>=1&&v<=5);
+        return (f.invertedQs&&f.invertedQs.includes(qi))?raw.map(v=>6-v):raw;
+      });
+      if(!vals.length)return null;
+      const m=avg(vals);
+      const raw=inst.scoring==='copsoq'?(m-1)*25:(m-1)/4*100;
+      return (f.riskInverted)?Math.max(0,Math.round((100-raw)*10)/10):Math.round(raw*10)/10;
+    });
+  });
+
   G={
     meta:{
       empresa:document.getElementById('f-emp').value||'N/D',
@@ -294,8 +328,9 @@ function parseXlsxRows(rows, extraPdfRows=[]){
     inst: INST,
     n:data.length,factorScores,dimScores,
     nps:{det:nd,neu:nn,pro:np,score:ns,total:npsVals.length},
-    demo:{setor:cntCol(setorCol),faixa:cntCol(faixaC),sexo:cntCol(sexoC),civil:cntCol(civilC),escol:cntCol(escolC)},
+    demo:{setor:cntCol(setorCol),unidade:cntCol(unitCol),faixa:cntCol(faixaC),sexo:cntCol(sexoC),civil:cntCol(civilC),escol:cntCol(escolC)},
     sectorScores,
+    unitScores,
     logo: logoDataUrl,
     timestamp: new Date().toISOString(),
     pdfCount: extraPdfRows ? extraPdfRows.length : 0,
