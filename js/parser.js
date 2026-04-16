@@ -63,7 +63,7 @@ function parseXlsxRows(rows, extraPdfRows=[]){
   const inst=INSTRUMENTS[INST];
 
   // Auto-detect NPS
-  let npsCol=hdrs.findIndex(h=>h.includes('0 a 10')||(h.includes('indica')&&h.includes('empresa'))||h.includes('recomendaria'));
+  let npsCol=hdrs.findIndex(h=>h.includes('0 a 10')||(h.includes('indica')&&h.includes('empresa'))||h.includes('recomendaria')||h==='qnps'||(/^q?nps$/.test(h)));
   // Auto-detect setor
   let setorCol=hdrs.findIndex(h=>h.includes('setor')||h.includes('sector'));
   // Auto-detect unidade (per-respondent column, distinct from meta field)
@@ -71,8 +71,20 @@ function parseXlsxRows(rows, extraPdfRows=[]){
 
   // Auto-detect question columns
   let qCols=[];
+  // Detect common prefix pattern like qaot_01, copsoq_01, q_01, etc.
+  const qPrefixMatch=hdrs.map(h=>h.match(/^([a-z_]+)0*1$/)).find(m=>m);
+  const qPrefix=qPrefixMatch?qPrefixMatch[1]:null;
   for(let q=1;q<=inst.nQuestions;q++){
-    const idx=hdrs.findIndex(h=>h.trim().match(new RegExp('^'+q+'[.\s]')));
+    // Try prefix pattern first (e.g. qaot_01, q_01)
+    if(qPrefix){
+      const padded=qPrefix+String(q).padStart(2,'0');
+      const plain=qPrefix+String(q);
+      let idx=hdrs.indexOf(padded);
+      if(idx<0)idx=hdrs.indexOf(plain);
+      if(idx>=0){qCols.push(idx);continue;}
+    }
+    // Try "number. " or "number " at start
+    const idx=hdrs.findIndex(h=>h.trim().match(new RegExp('^'+q+'[.\\s]')));
     if(idx>=0)qCols.push(idx);
   }
   // Fallback: find consecutive numeric cols
