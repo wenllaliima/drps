@@ -146,6 +146,8 @@ function buildUnitReportHtml(){
   const inst=INSTRUMENTS[G.inst];
   if(!G.unitScores||!Object.keys(G.unitScores).length)return '';
   const units=Object.keys(G.unitScores).sort((a,b)=>(G.demo.unidade[b]||0)-(G.demo.unidade[a]||0));
+  // Suppress section if there is only one unit (no meaningful breakdown)
+  if(units.length<2)return '';
   const factors=inst.factors;
 
   const cl=v=>v<50?'#15803d':v<75?'#854d0e':'#991b1b';

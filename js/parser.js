@@ -66,8 +66,8 @@ function parseXlsxRows(rows, extraPdfRows=[]){
   let npsCol=hdrs.findIndex(h=>h.includes('0 a 10')||(h.includes('indica')&&h.includes('empresa'))||h.includes('recomendaria')||h==='qnps'||(/^q?nps$/.test(h)));
   // Auto-detect setor
   let setorCol=hdrs.findIndex(h=>h.includes('setor')||h.includes('sector'));
-  // Auto-detect unidade (per-respondent column, distinct from meta field)
-  let unitCol=hdrs.findIndex(h=>(h.includes('unidade')||h.includes('filial')||h.includes('estabelecimento'))&&!h.includes('medida'));
+  // unitCol detection is deferred until after qCols is known (question headers may contain "unidade")
+  let unitCol=-1;
 
   // Auto-detect question columns
   let qCols=[];
@@ -141,12 +141,16 @@ function parseXlsxRows(rows, extraPdfRows=[]){
     const vals=data.slice(0,5).map(r=>String(r[i]));
     return vals.every(v=>isNaN(parseFloat(v))&&v.length>2);
   });}
-  // Unidade fallback — text column distinct from setor/nps cols
-  if(unitCol<0){unitCol=hdrs.findIndex((_,i)=>{
-    if(i<1||qCols.includes(i)||i===npsCol||i===setorCol)return false;
-    const h=hdrs[i];
-    return h.includes('unidade')||h.includes('filial')||h.includes('estabelecimento');
-  });}
+  // Detect unidade AFTER qCols is known — avoids matching question text that contains "unidade"
+  unitCol=hdrs.findIndex((h,i)=>{
+    if(qCols.includes(i)||i===npsCol||i===setorCol)return false;
+    if(!(h.includes('unidade')||h.includes('filial')||h.includes('estabelecimento')))return false;
+    if(h.includes('medida'))return false;
+    // Reject if the column is numeric (would be a Likert question, not a unit label)
+    const vals=data.slice(0,Math.min(data.length,10)).map(r=>r[i]);
+    const numericCount=vals.filter(v=>!isNaN(parseFloat(v))&&String(v).trim()!=='').length;
+    return numericCount<vals.filter(v=>String(v).trim()!=='').length*0.5;
+  });
 
   let notice='';
   if(qCols.length<inst.nQuestions)notice+=`⚠️ Encontradas ${qCols.length}/${inst.nQuestions} perguntas. `;
