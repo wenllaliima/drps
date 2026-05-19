@@ -233,6 +233,28 @@ function parseXlsxRows(rows, extraPdfRows=[]){
   console.groupEnd();
   console.groupEnd(); // [DRPS] group
 
+  // Saúde Geral scale guard — copsoq2s Q29 (qs index 28)
+  // textMap codifica a escala invertida: 'excelente':5 … 'ruim':1
+  // Se o formulário exportar numérico com 1=Excelente (padrão COPSOQ), riskInverted produz resultado errado.
+  // Heurística: média bruta < 2.5 numa população real indica inversão errada (saúde "ruim"=1 na escala textMap).
+  if (INST === 'copsoq2s' && qCols[28] !== undefined) {
+    const hVals = data.map(r => parseFloat(r[qCols[28]])).filter(v => !isNaN(v) && v >= 1 && v <= 5);
+    if (hVals.length > 0 && avg(hVals) < 2.5) {
+      const cn = document.getElementById('col-notice');
+      const msg = `⚠️ <strong>Saúde Geral (Q29):</strong> média bruta ${avg(hVals).toFixed(1)} — possível inversão de escala. ` +
+        `O formulário deve exportar as opções como <em>texto</em> ("Excelente", "Ruim"). ` +
+        `Se as respostas vierem como números com 1=Excelente (padrão COPSOQ), o score ficará invertido — saúde ruim aparecerá como baixo risco.`;
+      if (cn.style.display === 'block') {
+        cn.innerHTML += '<br>' + msg;
+      } else {
+        cn.innerHTML = msg;
+        cn.style.display = 'block';
+      }
+      console.warn('[DRPS] copsoq2s Saúde Geral (Q29): média bruta', avg(hVals).toFixed(2),
+        '— verifique se Q29 exporta texto ("Excelente"…"Ruim"), não numérico com 1=Excelente.');
+    }
+  }
+
   // NPS
   const npsVals=npsCol>=0?data.map(r=>parseFloat(r[npsCol])).filter(v=>!isNaN(v)&&v>=0&&v<=10):[];
   const nd=npsVals.filter(v=>v<=6).length,nn=npsVals.filter(v=>v>=7&&v<=8).length,np=npsVals.filter(v=>v>=9).length;

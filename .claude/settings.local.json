@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \":*)",
+      "Bash(grep -n \"const coName\\\\|const logoSvg\\\\|const html=\\\\`\\\\|try { addToReportHist\\\\|openHtmlTab\\(html\\)\" \"c:/Users/wenll/OneDrive/Área de Trabalho/AMBRAC Sistema/ambrac-sistema-v11.html\")",
+      "Bash(find 'c:/Users/wenll/OneDrive/Área de Trabalho/RISCOS/psico-survey/supabase' -name *.sql)",
+      "Bash(xargs ls:*)",
+      "Read(//c/Users/wenll/OneDrive/Área de Trabalho/RISCOS/psico-survey/src/**)",
+      "WebFetch(domain:ibegesp.eadplataforma.app)"
+    ]
+  }
+}

@@ -28,7 +28,7 @@
 | Key | Name | Questions | Factors | Scoring |
 |---|---|---|---|---|
 | `aot` | AOT — Avaliação da Organização do Trabalho | 24 | 12 | `likert5_0100` |
-| `copsoq2s` | COPSOQ II Curta | 41 | 15 | `copsoq` |
+| `copsoq2s` | COPSOQ II Curta | 41 | 26 | `copsoq` |
 | `copsoq2m` | COPSOQ II Média | 72 | 24 | `copsoq` |
 | `copsoq2a` | COPSOQ II Adaptada (Baixa Escolaridade) | 41 | 20 | `copsoq` + binary + scale10 |
 | `copsoq3` | COPSOQ III Brasil (Rodrigues, 2020) | 79 | 7 | `copsoq` |
